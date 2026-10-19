@@ -49,11 +49,13 @@
     <string name="editor_done_title">Tus clips están listos</string>
     <string name="editor_done_subtitle">Los videos verticales se guardaron en este dispositivo.</string>
     <string name="editor_done_clip">Clip %1$d</string>
+    <string name="editor_open_clip">Abrir video</string>
     <string name="editor_restart">Crear más clips</string>
 
     <string name="editor_error_no_video">No pudimos leer ese video. Elige otro archivo.</string>
     <string name="editor_error_analysis">No pudimos analizar el video. Inténtalo de nuevo.</string>
     <string name="editor_error_export">No pudimos exportar los clips. Inténtalo de nuevo.</string>
+    <string name="editor_error_open">No pudimos abrir el video. Verifica que haya una app instalada para reproducirlo.</string>
     <string name="editor_error_ffmpeg">No se encontró FFmpeg con soporte de subtítulos. Instala FFmpeg con libass y freetype para exportar en Desktop.</string>
     <string name="editor_error_unsupported">Esta función está disponible solo en Android y Desktop.</string>
 

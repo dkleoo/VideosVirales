@@ -61,6 +61,7 @@ kotlin {
         }
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)
+            implementation(libs.androidx.core)
             implementation(libs.androidx.media3.effect)
             implementation(libs.androidx.media3.transformer)
             implementation(libs.koin.android)

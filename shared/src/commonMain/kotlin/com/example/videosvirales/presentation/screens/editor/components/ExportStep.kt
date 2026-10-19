@@ -11,8 +11,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import com.example.videosvirales.data.mappers.editor.ExportedClip
 import com.example.videosvirales.presentation.screens.components.InfoCard
 import com.example.videosvirales.presentation.screens.components.PrimaryButton
+import com.example.videosvirales.presentation.screens.components.SecondaryButton
 import com.example.videosvirales.presentation.screens.editor.EditorScreenState
 import com.example.videosvirales.presentation.theme.AppTextStyle
 import com.example.videosvirales.presentation.theme.ColorApp
@@ -26,6 +28,7 @@ import videosvirales.shared.generated.resources.editor_done_title
 import videosvirales.shared.generated.resources.editor_export_progress
 import videosvirales.shared.generated.resources.editor_exporting_subtitle
 import videosvirales.shared.generated.resources.editor_exporting_title
+import videosvirales.shared.generated.resources.editor_open_clip
 import videosvirales.shared.generated.resources.editor_restart
 import kotlin.math.roundToInt
 
@@ -70,6 +73,7 @@ fun ExportStep(state: EditorScreenState) {
 fun DoneStep(
     state: EditorScreenState,
     onRestart: () -> Unit,
+    onOpenClip: (ExportedClip) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
@@ -91,10 +95,20 @@ fun DoneStep(
                 title = stringResource(Res.string.editor_done_clip, clip.index),
                 value = clip.path,
             )
-            Spacer(Modifier.height(Spacing.Md))
+            Spacer(Modifier.height(Spacing.Sm))
+            SecondaryButton(
+                text = stringResource(Res.string.editor_open_clip),
+                onClick = { onOpenClip(clip) },
+                modifier = Modifier.fillMaxWidth(),
+            )
+            Spacer(Modifier.height(Spacing.Lg))
         }
 
-        Spacer(Modifier.height(Spacing.Lg))
+        state.error?.let { error ->
+            EditorErrorBanner(error)
+            Spacer(Modifier.height(Spacing.Lg))
+        }
+
         PrimaryButton(
             text = stringResource(Res.string.editor_restart),
             onClick = onRestart,

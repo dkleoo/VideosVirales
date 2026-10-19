@@ -40,6 +40,7 @@ import videosvirales.shared.generated.resources.editor_error_analysis
 import videosvirales.shared.generated.resources.editor_error_export
 import videosvirales.shared.generated.resources.editor_error_ffmpeg
 import videosvirales.shared.generated.resources.editor_error_no_video
+import videosvirales.shared.generated.resources.editor_error_open
 import videosvirales.shared.generated.resources.editor_error_unsupported
 import videosvirales.shared.generated.resources.editor_step_progress
 import videosvirales.shared.generated.resources.editor_title
@@ -171,6 +172,7 @@ fun editorErrorMessage(error: EditorError): String = when (error) {
     EditorError.NO_VIDEO -> stringResource(Res.string.editor_error_no_video)
     EditorError.ANALYSIS_FAILED -> stringResource(Res.string.editor_error_analysis)
     EditorError.EXPORT_FAILED -> stringResource(Res.string.editor_error_export)
+    EditorError.OPEN_FAILED -> stringResource(Res.string.editor_error_open)
     EditorError.FFMPEG_MISSING -> stringResource(Res.string.editor_error_ffmpeg)
     EditorError.UNSUPPORTED -> stringResource(Res.string.editor_error_unsupported)
 }

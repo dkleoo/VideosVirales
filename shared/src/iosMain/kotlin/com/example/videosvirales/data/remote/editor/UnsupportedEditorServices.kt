@@ -22,5 +22,7 @@ class UnsupportedEditorServices : EditorServices {
         outputDirectory: String,
     ): ExportedClip = throw EditorException(EditorError.UNSUPPORTED)
 
+    override suspend fun openClip(uri: String) = throw EditorException(EditorError.UNSUPPORTED)
+
     override fun defaultOutputDirectory(): String = ""
 }

@@ -49,11 +49,13 @@
     <string name="editor_done_title">Seus clipes estão prontos</string>
     <string name="editor_done_subtitle">Os vídeos verticais foram salvos neste dispositivo.</string>
     <string name="editor_done_clip">Clipe %1$d</string>
+    <string name="editor_open_clip">Abrir vídeo</string>
     <string name="editor_restart">Criar mais clipes</string>
 
     <string name="editor_error_no_video">Não foi possível ler esse vídeo. Escolha outro arquivo.</string>
     <string name="editor_error_analysis">Não foi possível analisar o vídeo. Tente novamente.</string>
     <string name="editor_error_export">Não foi possível exportar os clipes. Tente novamente.</string>
+    <string name="editor_error_open">Não foi possível abrir o vídeo. Verifique se há um app instalado para reproduzi-lo.</string>
     <string name="editor_error_ffmpeg">FFmpeg com suporte a legendas não foi encontrado. Instale FFmpeg com libass e freetype para exportar no Desktop.</string>
     <string name="editor_error_unsupported">Este recurso está disponível apenas no Android e Desktop.</string>
 

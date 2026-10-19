@@ -8,6 +8,7 @@ import com.example.videosvirales.data.mappers.editor.VideoSignal
 import com.example.videosvirales.data.repositoyImpl.editor.EditorException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.awt.Desktop
 import java.io.File
 
 class DesktopEditorServices : EditorServices {
@@ -44,6 +45,27 @@ class DesktopEditorServices : EditorServices {
         clip: ClipDraft,
         outputDirectory: String,
     ): ExportedClip = exporter.export(video, clip, outputDirectory)
+
+    override suspend fun openClip(uri: String) = withContext(Dispatchers.IO) {
+        try {
+            val file = if (uri.startsWith("file:")) {
+                File(java.net.URI(uri))
+            } else {
+                File(uri)
+            }
+            if (!file.isFile) throw EditorException(EditorError.OPEN_FAILED)
+            if (!Desktop.isDesktopSupported() ||
+                !Desktop.getDesktop().isSupported(Desktop.Action.OPEN)
+            ) {
+                throw EditorException(EditorError.OPEN_FAILED)
+            }
+            Desktop.getDesktop().open(file)
+        } catch (exception: EditorException) {
+            throw exception
+        } catch (exception: Exception) {
+            throw EditorException(EditorError.OPEN_FAILED, exception)
+        }
+    }
 
     override fun defaultOutputDirectory(): String {
         val directory = File(System.getProperty("user.home"), "Movies/VideosVirales")

@@ -69,6 +69,7 @@ Subir video
 - Desktop: selección con diálogo nativo, análisis y exportación con FFmpeg.
 - Desktop requiere un FFmpeg que incluya `libass`, `freetype` y `zoompan`. En macOS se puede usar `ffmpeg-full` de Homebrew.
 - Android guarda los clips en `Movies/VideosVirales`; Desktop en `~/Movies/VideosVirales`.
+- Cada clip tiene el botón `Abrir video`, que lo reproduce con el visor o programa predeterminado del sistema.
 - iOS no implementa este flujo por ahora.
 - Los subtítulos son editables: la heurística no transcribe audio.
 

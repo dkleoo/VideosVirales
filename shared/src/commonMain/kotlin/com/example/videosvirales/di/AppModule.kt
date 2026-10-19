@@ -11,6 +11,7 @@ import com.example.videosvirales.domain.useCase.editor.AnalyzeVideoUseCase
 import com.example.videosvirales.domain.useCase.editor.BuildClipsUseCase
 import com.example.videosvirales.domain.useCase.editor.ExportClipsUseCase
 import com.example.videosvirales.domain.useCase.editor.LoadVideoUseCase
+import com.example.videosvirales.domain.useCase.editor.OpenClipUseCase
 import com.example.videosvirales.domain.useCase.home.GetHomeInfoUseCase
 import com.example.videosvirales.presentation.screens.editor.EditorViewModel
 import com.example.videosvirales.presentation.screens.home.HomeViewModel
@@ -30,5 +31,6 @@ val appModule = module {
     factory { AnalyzeVideoUseCase(get()) }
     factory { BuildClipsUseCase() }
     factory { ExportClipsUseCase(get()) }
-    factory { EditorViewModel(get(), get(), get(), get()) }
+    factory { OpenClipUseCase(get()) }
+    factory { EditorViewModel(get(), get(), get(), get(), get()) }
 }

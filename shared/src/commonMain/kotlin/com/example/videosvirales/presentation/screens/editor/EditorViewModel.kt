@@ -14,6 +14,7 @@ import com.example.videosvirales.domain.useCase.editor.AnalyzeVideoUseCase
 import com.example.videosvirales.domain.useCase.editor.BuildClipsUseCase
 import com.example.videosvirales.domain.useCase.editor.ExportClipsUseCase
 import com.example.videosvirales.domain.useCase.editor.LoadVideoUseCase
+import com.example.videosvirales.domain.useCase.editor.OpenClipUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,6 +26,7 @@ class EditorViewModel(
     private val analyzeVideo: AnalyzeVideoUseCase,
     private val buildClips: BuildClipsUseCase,
     private val exportClips: ExportClipsUseCase,
+    private val openClipUseCase: OpenClipUseCase,
 ) : ScreenModel {
     private val _state = MutableStateFlow(EditorScreenState())
     val state: StateFlow<EditorScreenState> = _state.asStateFlow()
@@ -185,6 +187,15 @@ class EditorViewModel(
 
     fun clearError() {
         _state.update { it.copy(error = null) }
+    }
+
+    fun openClip(clip: ExportedClip) {
+        screenModelScope.launch {
+            when (val result = openClipUseCase(clip)) {
+                is EditorResult.Success -> _state.update { it.copy(error = null) }
+                is EditorResult.Error -> _state.update { it.copy(error = result.error) }
+            }
+        }
     }
 
     fun restart() {

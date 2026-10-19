@@ -1,0 +1,5 @@
+<paths>
+    <external-files-path name="videos" path="Movies/VideosVirales/"/>
+    <files-path name="internal" path="."/>
+    <cache-path name="cache" path="."/>
+</paths>

@@ -94,6 +94,7 @@ private fun EditorContent(
             EditorStep.DONE -> DoneStep(
                 state = state,
                 onRestart = viewModel::restart,
+                onOpenClip = viewModel::openClip,
             )
         }
 

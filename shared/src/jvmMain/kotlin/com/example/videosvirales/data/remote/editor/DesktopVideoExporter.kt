@@ -82,6 +82,7 @@ class DesktopVideoExporter {
                 index = clip.index,
                 path = outputFile.absolutePath,
                 displayName = outputFile.name,
+                uri = outputFile.toURI().toString(),
             )
         } catch (exception: EditorException) {
             throw exception

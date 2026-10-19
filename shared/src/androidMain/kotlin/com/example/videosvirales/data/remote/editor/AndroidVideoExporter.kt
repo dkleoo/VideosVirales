@@ -89,15 +89,16 @@ class AndroidVideoExporter(
                 activeTransformer.start(editedMediaItem, tempFile.absolutePath)
             }
 
-            val publishedPath = publish(
+            val published = publish(
                 tempFile = tempFile,
                 fileName = fileName,
                 fallbackDirectory = outputDirectory,
             )
             ExportedClip(
                 index = clip.index,
-                path = publishedPath,
+                path = published.path,
                 displayName = fileName,
+                uri = published.uri,
             )
         } catch (exception: EditorException) {
             throw exception
@@ -151,18 +152,18 @@ class AndroidVideoExporter(
         tempFile: File,
         fileName: String,
         fallbackDirectory: String,
-    ): String {
-        val publishedPath = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+    ): PublishedClip {
+        val published = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             runCatching { publishToGallery(tempFile, fileName) }
                 .getOrElse { publishToDirectory(tempFile, fileName, fallbackDirectory) }
         } else {
             publishToDirectory(tempFile, fileName, fallbackDirectory)
         }
         tempFile.delete()
-        return publishedPath
+        return published
     }
 
-    private fun publishToGallery(tempFile: File, fileName: String): String {
+    private fun publishToGallery(tempFile: File, fileName: String): PublishedClip {
         val resolver = context.contentResolver
         val values = ContentValues().apply {
             put(MediaStore.Video.Media.DISPLAY_NAME, fileName)
@@ -186,7 +187,10 @@ class AndroidVideoExporter(
                 put(MediaStore.Video.Media.IS_PENDING, 0)
             }
             resolver.update(uri, completedValues, null, null)
-            "${Environment.DIRECTORY_MOVIES}/VideosVirales/$fileName"
+            PublishedClip(
+                path = "${Environment.DIRECTORY_MOVIES}/VideosVirales/$fileName",
+                uri = uri.toString(),
+            )
         } catch (exception: Exception) {
             resolver.delete(uri, null, null)
             throw exception
@@ -197,12 +201,20 @@ class AndroidVideoExporter(
         tempFile: File,
         fileName: String,
         directoryPath: String,
-    ): String {
+    ): PublishedClip {
         val directory = File(directoryPath).apply { mkdirs() }
         val target = File(directory, fileName)
         tempFile.copyTo(target, overwrite = true)
-        return target.absolutePath
+        return PublishedClip(
+            path = target.absolutePath,
+            uri = target.absolutePath,
+        )
     }
+
+    private data class PublishedClip(
+        val path: String,
+        val uri: String,
+    )
 
     private companion object {
         const val WIDTH = 1080

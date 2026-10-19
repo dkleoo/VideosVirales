@@ -4,6 +4,7 @@ android-compileSdk = "37"
 android-minSdk = "24"
 android-targetSdk = "37"
 androidx-activity = "1.13.0"
+androidx-core = "1.19.1"
 composeMultiplatform = "1.12.1"
 koin = "4.2.2"
 kotlin = "2.4.20"
@@ -16,6 +17,7 @@ voyager = "1.1.0-beta03"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
+androidx-core = { module = "androidx.core:core", version.ref = "androidx-core" }
 androidx-media3-effect = { module = "androidx.media3:media3-effect", version.ref = "media3" }
 androidx-media3-transformer = { module = "androidx.media3:media3-transformer", version.ref = "media3" }
 compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeMultiplatform" }

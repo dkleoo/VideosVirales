@@ -19,5 +19,7 @@ interface EditorServices {
         outputDirectory: String,
     ): ExportedClip
 
+    suspend fun openClip(uri: String)
+
     fun defaultOutputDirectory(): String
 }

@@ -27,6 +27,9 @@ class EditorRepositoryImpl(
     ): EditorResult<ExportedClip> =
         safeCall(EditorError.EXPORT_FAILED) { editorServices.exportClip(video, clip, outputDirectory) }
 
+    override suspend fun openClip(clip: ExportedClip): EditorResult<Unit> =
+        safeCall(EditorError.OPEN_FAILED) { editorServices.openClip(clip.uri) }
+
     override fun defaultOutputDirectory(): String = editorServices.defaultOutputDirectory()
 
     private suspend inline fun <T> safeCall(

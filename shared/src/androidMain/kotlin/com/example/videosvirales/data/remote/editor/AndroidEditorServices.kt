@@ -1,10 +1,13 @@
 package com.example.videosvirales.data.remote.editor
 
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Environment
 import android.provider.OpenableColumns
+import androidx.core.content.FileProvider
 import com.example.videosvirales.data.mappers.editor.ClipDraft
 import com.example.videosvirales.data.mappers.editor.EditorError
 import com.example.videosvirales.data.mappers.editor.ExportedClip
@@ -58,6 +61,34 @@ class AndroidEditorServices(
         clip: ClipDraft,
         outputDirectory: String,
     ): ExportedClip = exporter.export(video, clip, outputDirectory)
+
+    override suspend fun openClip(uri: String) = withContext(Dispatchers.Main) {
+        try {
+            val clipUri = if (uri.startsWith("content://")) {
+                Uri.parse(uri)
+            } else {
+                val file = if (uri.startsWith("file:")) {
+                    File(Uri.parse(uri).path ?: uri)
+                } else {
+                    File(uri)
+                }
+                FileProvider.getUriForFile(
+                    context,
+                    "${context.packageName}.fileprovider",
+                    file,
+                )
+            }
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                setDataAndType(clipUri, "video/mp4")
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
+        } catch (exception: ActivityNotFoundException) {
+            throw EditorException(EditorError.OPEN_FAILED, exception)
+        } catch (exception: Exception) {
+            throw EditorException(EditorError.OPEN_FAILED, exception)
+        }
+    }
 
     override fun defaultOutputDirectory(): String {
         val baseDirectory = context.getExternalFilesDir(Environment.DIRECTORY_MOVIES)

@@ -20,5 +20,7 @@ interface EditorRepository {
         outputDirectory: String,
     ): EditorResult<ExportedClip>
 
+    suspend fun openClip(clip: ExportedClip): EditorResult<Unit>
+
     fun defaultOutputDirectory(): String
 }
