@@ -1,0 +1,61 @@
+<resources>
+    <string name="app_name">VideosVirales</string>
+    <string name="home_title">VideosVirales</string>
+    <string name="home_subtitle">Your space for viral videos</string>
+    <string name="home_platform_label">Platform</string>
+    <string name="home_error">We couldn\'t load the information.</string>
+    <string name="home_retry">Retry</string>
+    <string name="home_create_clips">Create clips</string>
+
+    <string name="editor_title">Clip studio</string>
+    <string name="editor_step_progress">Step %1$d of 4</string>
+    <string name="editor_upload_title">Upload a video</string>
+    <string name="editor_upload_subtitle">Pick a video to find its best moments and turn them into short clips.</string>
+    <string name="editor_pick_video">Pick video</string>
+    <string name="editor_selected_video">Selected video</string>
+    <string name="editor_change_video">Change video</string>
+    <string name="editor_retry">Retry</string>
+    <string name="editor_loading_video">Loading video…</string>
+
+    <string name="editor_analyzing_title">Finding the best moments</string>
+    <string name="editor_analyzing_subtitle">The local analysis is reviewing visual changes in your video.</string>
+    <string name="editor_analyzing_progress">%1$d%</string>
+
+    <string name="editor_settings_title">Configure your clips</string>
+    <string name="editor_settings_subtitle">Choose how many clips to extract and how long each one should be.</string>
+    <string name="editor_clip_count">Number of clips</string>
+    <string name="editor_clip_duration">Duration per clip</string>
+    <string name="editor_seconds">%1$d s</string>
+    <string name="editor_animation">Animation</string>
+    <string name="editor_generate_clips">Generate clips</string>
+    <string name="editor_animation_none">None</string>
+    <string name="editor_animation_zoom_in">Zoom in</string>
+    <string name="editor_animation_zoom_out">Zoom out</string>
+    <string name="editor_animation_fade">Fade</string>
+    <string name="editor_animation_slide_up">Slide up</string>
+
+    <string name="editor_review_title">Review your clips</string>
+    <string name="editor_review_subtitle">Add a subtitle and choose an animation for each clip.</string>
+    <string name="editor_clip_number">Clip %1$d</string>
+    <string name="editor_score">Score %1$d%</string>
+    <string name="editor_subtitle_label">Subtitle</string>
+    <string name="editor_subtitle_placeholder">Write the text shown on this clip</string>
+    <string name="editor_export">Export clips</string>
+    <string name="editor_back">Back</string>
+
+    <string name="editor_exporting_title">Exporting clips</string>
+    <string name="editor_exporting_subtitle">Please keep the app open while the videos are rendered.</string>
+    <string name="editor_export_progress">%1$d of %2$d clips</string>
+    <string name="editor_done_title">Your clips are ready</string>
+    <string name="editor_done_subtitle">The vertical videos were saved on this device.</string>
+    <string name="editor_done_clip">Clip %1$d</string>
+    <string name="editor_restart">Create more clips</string>
+
+    <string name="editor_error_no_video">We couldn\'t read that video. Please choose another file.</string>
+    <string name="editor_error_analysis">We couldn\'t analyze the video. Please try again.</string>
+    <string name="editor_error_export">We couldn\'t export the clips. Please try again.</string>
+    <string name="editor_error_ffmpeg">FFmpeg with subtitle support was not found. Install FFmpeg with libass and freetype to export on Desktop.</string>
+    <string name="editor_error_unsupported">This feature is available on Android and Desktop only.</string>
+
+    <string name="picker_video_title">Select a video</string>
+</resources>

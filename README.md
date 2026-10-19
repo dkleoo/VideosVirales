@@ -1,23 +1,80 @@
-This is a Kotlin Multiplatform project targeting Desktop (JVM).
+# VideosVirales
 
-* [/shared](./shared/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-    - [commonMain](./shared/src/commonMain/kotlin) is for code that’s common for all targets.
-    - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-      For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-      the [iosMain](./shared/src/iosMain/kotlin) folder would be the right place for such calls.
-      Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./shared/src/jvmMain/kotlin)
-      folder is the appropriate location.
+Aplicación Kotlin Multiplatform con Compose Multiplatform para Android, iOS y Desktop.
 
-### Running the apps
+## Arquitectura
 
-Use the run configurations provided by the run widget in your IDE's toolbar. You can also use these commands and
-options:
+```text
+Screen (Voyager)
+ → ViewModel (ScreenModel + StateFlow)
+   → UseCase
+     → Repository (domain)
+       → RepositoryImpl (data)
+         → Services
+           → DTOs / mappers
+```
 
-- Desktop app:
-    - Hot reload: `./gradlew :desktopApp:hotRun --auto`
-    - Standard run: `./gradlew :desktopApp:run`
+La UI no accede a repositorios ni servicios. El ViewModel no usa Ktor.
 
----
+El cliente HTTP (Ktor) está registrado en Koin y listo para los servicios. Los endpoints reales se agregarán en `domain/util/EndPoints.kt` cuando exista una API definida; no se inventaron rutas.
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…# VideosVirales
+## Módulos
+
+- `shared`: código común, tema, navegación, DI y capas de dominio/datos.
+- `androidApp`: aplicación Android.
+- `desktopApp`: aplicación Desktop (JVM).
+- `iosApp`: aplicación iOS (Xcode).
+
+## Estructura compartida
+
+```text
+shared/src/commonMain/kotlin/com/example/videosvirales/
+├── di/                         Koin + koinScreenModel + módulo de plataforma
+├── domain/
+│   ├── repository/
+│   └── useCase/
+├── data/
+│   ├── mappers/
+│   ├── repositoyImpl/
+│   └── remote/
+│       ├── editor/
+│       ├── home/
+│       └── network/
+├── platform/                   expect/actual, incluido el selector de video
+└── presentation/
+    ├── screens/
+    │   ├── components/
+    │   ├── editor/
+    │   ├── home/
+    │   └── routes/
+    ├── theme/
+    └── util/
+```
+
+Los textos están en `shared/src/commonMain/composeResources` para `es`, `en` y `pt`.
+
+## Editor de clips
+
+Flujo:
+
+```text
+Subir video
+ → Analizar mejores momentos (heurística local)
+   → Configurar cantidad y duración
+     → Editar subtítulos y animación por clip
+       → Exportar MP4 vertical 1080x1920
+```
+
+- Android: selección con el selector del sistema, análisis con `MediaMetadataRetriever` y exportación con Media3 Transformer.
+- Desktop: selección con diálogo nativo, análisis y exportación con FFmpeg.
+- Desktop requiere un FFmpeg que incluya `libass`, `freetype` y `zoompan`. En macOS se puede usar `ffmpeg-full` de Homebrew.
+- Android guarda los clips en `Movies/VideosVirales`; Desktop en `~/Movies/VideosVirales`.
+- iOS no implementa este flujo por ahora.
+- Los subtítulos son editables: la heurística no transcribe audio.
+
+## Ejecutar
+
+- Android: `./gradlew :androidApp:assembleDebug`
+- Desktop: `./gradlew :desktopApp:run`
+- iOS: abrir `iosApp/iosApp.xcodeproj`
+- Tests: `./gradlew :shared:jvmTest :shared:testAndroidHostTest :shared:iosSimulatorArm64Test`

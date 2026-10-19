@@ -1,0 +1,61 @@
+<resources>
+    <string name="app_name">VideosVirales</string>
+    <string name="home_title">VideosVirales</string>
+    <string name="home_subtitle">Seu espaço de vídeos virais</string>
+    <string name="home_platform_label">Plataforma</string>
+    <string name="home_error">Não foi possível carregar as informações.</string>
+    <string name="home_retry">Tentar novamente</string>
+    <string name="home_create_clips">Criar clipes</string>
+
+    <string name="editor_title">Estúdio de clipes</string>
+    <string name="editor_step_progress">Passo %1$d de 4</string>
+    <string name="editor_upload_title">Envie um vídeo</string>
+    <string name="editor_upload_subtitle">Escolha um vídeo para encontrar os melhores momentos e transformá-los em clipes curtos.</string>
+    <string name="editor_pick_video">Escolher vídeo</string>
+    <string name="editor_selected_video">Vídeo selecionado</string>
+    <string name="editor_change_video">Trocar vídeo</string>
+    <string name="editor_retry">Tentar novamente</string>
+    <string name="editor_loading_video">Carregando vídeo…</string>
+
+    <string name="editor_analyzing_title">Encontrando os melhores momentos</string>
+    <string name="editor_analyzing_subtitle">A análise local está revisando as mudanças visuais do vídeo.</string>
+    <string name="editor_analyzing_progress">%1$d%</string>
+
+    <string name="editor_settings_title">Configure seus clipes</string>
+    <string name="editor_settings_subtitle">Escolha quantos clipes extrair e quanto cada um deve durar.</string>
+    <string name="editor_clip_count">Quantidade de clipes</string>
+    <string name="editor_clip_duration">Duração por clipe</string>
+    <string name="editor_seconds">%1$d s</string>
+    <string name="editor_animation">Animação</string>
+    <string name="editor_generate_clips">Gerar clipes</string>
+    <string name="editor_animation_none">Nenhuma</string>
+    <string name="editor_animation_zoom_in">Zoom in</string>
+    <string name="editor_animation_zoom_out">Zoom out</string>
+    <string name="editor_animation_fade">Desvanecer</string>
+    <string name="editor_animation_slide_up">Deslizar para cima</string>
+
+    <string name="editor_review_title">Revise seus clipes</string>
+    <string name="editor_review_subtitle">Adicione uma legenda e escolha uma animação para cada clipe.</string>
+    <string name="editor_clip_number">Clipe %1$d</string>
+    <string name="editor_score">Pontuação %1$d%</string>
+    <string name="editor_subtitle_label">Legenda</string>
+    <string name="editor_subtitle_placeholder">Escreva o texto que aparecerá neste clipe</string>
+    <string name="editor_export">Exportar clipes</string>
+    <string name="editor_back">Voltar</string>
+
+    <string name="editor_exporting_title">Exportando clipes</string>
+    <string name="editor_exporting_subtitle">Mantenha o app aberto enquanto os vídeos são renderizados.</string>
+    <string name="editor_export_progress">%1$d de %2$d clipes</string>
+    <string name="editor_done_title">Seus clipes estão prontos</string>
+    <string name="editor_done_subtitle">Os vídeos verticais foram salvos neste dispositivo.</string>
+    <string name="editor_done_clip">Clipe %1$d</string>
+    <string name="editor_restart">Criar mais clipes</string>
+
+    <string name="editor_error_no_video">Não foi possível ler esse vídeo. Escolha outro arquivo.</string>
+    <string name="editor_error_analysis">Não foi possível analisar o vídeo. Tente novamente.</string>
+    <string name="editor_error_export">Não foi possível exportar os clipes. Tente novamente.</string>
+    <string name="editor_error_ffmpeg">FFmpeg com suporte a legendas não foi encontrado. Instale FFmpeg com libass e freetype para exportar no Desktop.</string>
+    <string name="editor_error_unsupported">Este recurso está disponível apenas no Android e Desktop.</string>
+
+    <string name="picker_video_title">Selecionar um vídeo</string>
+</resources>
