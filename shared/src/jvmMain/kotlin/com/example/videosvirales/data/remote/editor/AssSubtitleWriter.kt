@@ -1,6 +1,5 @@
 package com.example.videosvirales.data.remote.editor
 
-import com.example.videosvirales.data.mappers.editor.ClipAnimation
 import java.io.File
 import java.util.Locale
 
@@ -9,7 +8,8 @@ object AssSubtitleWriter {
         file: File,
         text: String,
         durationMs: Long,
-        animation: ClipAnimation,
+        width: Int,
+        height: Int,
     ) {
         val dialogue = text
             .replace("\\", "\\\\")
@@ -18,19 +18,11 @@ object AssSubtitleWriter {
             .replace("\r\n", "\n")
             .replace("\n", "\\N")
 
-        val animationTag = when (animation) {
-            ClipAnimation.NONE -> ""
-            ClipAnimation.FADE -> "{\\fad(300,300)}"
-            ClipAnimation.SLIDE_UP -> "{\\fad(300,300)\\move(540,1740,540,1640,0,350)}"
-            ClipAnimation.ZOOM_IN,
-            ClipAnimation.ZOOM_OUT -> "{\\fad(250,250)\\fscx80\\fscy80\\t(0,300,\\fscx100\\fscy100)}"
-        }
-
         val content = buildString {
             appendLine("[Script Info]")
             appendLine("ScriptType: v4.00+")
-            appendLine("PlayResX: 1080")
-            appendLine("PlayResY: 1920")
+            appendLine("PlayResX: $width")
+            appendLine("PlayResY: $height")
             appendLine("WrapStyle: 0")
             appendLine("ScaledBorderAndShadow: yes")
             appendLine()
@@ -49,7 +41,7 @@ object AssSubtitleWriter {
             appendLine("[Events]")
             appendLine("Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text")
             appendLine(
-                "Dialogue: 0,${assTime(0)},${assTime(durationMs)},Default,,0,0,0,,$animationTag$dialogue"
+                "Dialogue: 0,${assTime(0)},${assTime(durationMs)},Default,,0,0,0,,$dialogue"
             )
         }
         file.writeText(content, Charsets.UTF_8)

@@ -1,23 +1,32 @@
 package com.example.videosvirales.presentation.screens.editor.components
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.example.videosvirales.data.mappers.editor.ClipAnimation
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
 import com.example.videosvirales.data.mappers.editor.ClipDraft
+import com.example.videosvirales.data.mappers.editor.VideoAspect
 import com.example.videosvirales.presentation.screens.components.PrimaryButton
 import com.example.videosvirales.presentation.screens.components.SecondaryButton
 import com.example.videosvirales.presentation.screens.editor.EditorScreenState
@@ -27,23 +36,27 @@ import com.example.videosvirales.presentation.theme.Spacing
 import com.example.videosvirales.presentation.theme.tiendasOnTextStyle
 import com.example.videosvirales.presentation.util.formatDuration
 import com.example.videosvirales.presentation.util.formatScore
+import org.jetbrains.compose.resources.decodeToImageBitmap
 import org.jetbrains.compose.resources.stringResource
 import videosvirales.shared.generated.resources.Res
-import videosvirales.shared.generated.resources.editor_animation
+import videosvirales.shared.generated.resources.editor_aspect
 import videosvirales.shared.generated.resources.editor_back
 import videosvirales.shared.generated.resources.editor_clip_number
 import videosvirales.shared.generated.resources.editor_export
+import videosvirales.shared.generated.resources.editor_preparing_clips
+import videosvirales.shared.generated.resources.editor_preview_unavailable
 import videosvirales.shared.generated.resources.editor_review_subtitle
 import videosvirales.shared.generated.resources.editor_review_title
 import videosvirales.shared.generated.resources.editor_score
 import videosvirales.shared.generated.resources.editor_subtitle_label
 import videosvirales.shared.generated.resources.editor_subtitle_placeholder
+import videosvirales.shared.generated.resources.editor_subtitles_unavailable
 
 @Composable
 fun ReviewStep(
     state: EditorScreenState,
     onSubtitleChange: (Int, String) -> Unit,
-    onAnimationChange: (Int, ClipAnimation) -> Unit,
+    onAspectChange: (VideoAspect) -> Unit,
     onExport: () -> Unit,
     onBack: () -> Unit,
 ) {
@@ -60,15 +73,48 @@ fun ReviewStep(
                 MaterialTheme.colorScheme.onSurfaceVariant,
             ),
         )
-        Spacer(Modifier.height(Spacing.Xl))
+        Spacer(Modifier.height(Spacing.Lg))
+        SectionTitle(stringResource(Res.string.editor_aspect))
+        Spacer(Modifier.height(Spacing.Sm))
+        AspectSelector(
+            selected = state.aspect,
+            onSelect = onAspectChange,
+        )
 
+        if (state.isPreparingClips) {
+            Spacer(Modifier.height(Spacing.Lg))
+            LinearProgressIndicator(
+                modifier = Modifier.fillMaxWidth(),
+            )
+            Spacer(Modifier.height(Spacing.Sm))
+            Text(
+                text = stringResource(Res.string.editor_preparing_clips),
+                style = tiendasOnTextStyle(
+                    AppTextStyle.Caption,
+                    MaterialTheme.colorScheme.onSurfaceVariant,
+                ),
+            )
+        }
+
+        if (state.subtitlesNotice) {
+            Spacer(Modifier.height(Spacing.Md))
+            Text(
+                text = stringResource(Res.string.editor_subtitles_unavailable),
+                style = tiendasOnTextStyle(
+                    AppTextStyle.Caption,
+                    MaterialTheme.colorScheme.onSurfaceVariant,
+                ),
+            )
+        }
+
+        Spacer(Modifier.height(Spacing.Xl))
         val maxScore = state.clips.maxOfOrNull { it.score }?.takeIf { it > 0f } ?: 1f
         state.clips.forEach { clip ->
             ClipEditorCard(
                 clip = clip,
                 scorePercent = formatScore(clip.score / maxScore),
+                thumbnail = state.thumbnails[clip.index],
                 onSubtitleChange = { onSubtitleChange(clip.index, it) },
-                onAnimationChange = { onAnimationChange(clip.index, it) },
             )
             Spacer(Modifier.height(Spacing.Lg))
         }
@@ -77,6 +123,7 @@ fun ReviewStep(
             text = stringResource(Res.string.editor_export),
             onClick = onExport,
             modifier = Modifier.fillMaxWidth(),
+            enabled = !state.isPreparingClips,
         )
         Spacer(Modifier.height(Spacing.Sm))
         SecondaryButton(
@@ -91,8 +138,8 @@ fun ReviewStep(
 private fun ClipEditorCard(
     clip: ClipDraft,
     scorePercent: Int,
+    thumbnail: ByteArray?,
     onSubtitleChange: (String) -> Unit,
-    onAnimationChange: (ClipAnimation) -> Unit,
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -106,6 +153,36 @@ private fun ClipEditorCard(
                 .fillMaxWidth()
                 .padding(Spacing.Xl),
         ) {
+            val aspectModifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(clip.aspect.width.toFloat() / clip.aspect.height)
+                .clip(RoundedCornerShape(Radius.Sm))
+
+            if (thumbnail != null) {
+                val image = remember(thumbnail) { thumbnail.decodeToImageBitmap() }
+                Image(
+                    bitmap = image,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = aspectModifier,
+                )
+            } else {
+                Box(
+                    modifier = aspectModifier.background(MaterialTheme.colorScheme.surfaceVariant),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = stringResource(Res.string.editor_preview_unavailable),
+                        style = tiendasOnTextStyle(
+                            AppTextStyle.Caption,
+                            MaterialTheme.colorScheme.onSurfaceVariant,
+                        ),
+                        textAlign = TextAlign.Center,
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(Spacing.Lg))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -155,19 +232,6 @@ private fun ClipEditorCard(
                 minLines = 2,
                 maxLines = 4,
                 shape = RoundedCornerShape(Radius.Sm),
-            )
-            Spacer(Modifier.height(Spacing.Lg))
-            Text(
-                text = stringResource(Res.string.editor_animation),
-                style = tiendasOnTextStyle(
-                    AppTextStyle.Caption,
-                    MaterialTheme.colorScheme.onSurfaceVariant,
-                ),
-            )
-            Spacer(Modifier.height(Spacing.Sm))
-            AnimationSelector(
-                selected = clip.animation,
-                onSelect = onAnimationChange,
             )
         }
     }

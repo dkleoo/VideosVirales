@@ -79,14 +79,14 @@ private fun EditorContent(
                 state = state,
                 onClipCountChange = viewModel::updateClipCount,
                 onClipDurationChange = viewModel::updateClipDuration,
-                onAnimationChange = viewModel::updateAnimation,
+                onAspectChange = viewModel::updateAspect,
                 onGenerate = viewModel::generateClips,
                 onPick = onPick,
             )
             EditorStep.REVIEW -> ReviewStep(
                 state = state,
                 onSubtitleChange = viewModel::updateSubtitle,
-                onAnimationChange = viewModel::updateClipAnimation,
+                onAspectChange = viewModel::updateAspect,
                 onExport = viewModel::export,
                 onBack = viewModel::backToSettings,
             )

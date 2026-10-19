@@ -74,7 +74,7 @@ class BuildClipsUseCase {
                     endMs = candidate.endMs,
                     score = candidate.score,
                     subtitle = "",
-                    animation = config.animation,
+                    aspect = config.aspect,
                 )
             }
     }

@@ -26,20 +26,21 @@
     <string name="editor_clip_count">Cantidad de clips</string>
     <string name="editor_clip_duration">Duración por clip</string>
     <string name="editor_seconds">%1$d s</string>
-    <string name="editor_animation">Animación</string>
+    <string name="editor_aspect">Formato</string>
+    <string name="editor_aspect_9_16">9:16</string>
+    <string name="editor_aspect_1_1">1:1</string>
+    <string name="editor_aspect_16_9">16:9</string>
     <string name="editor_generate_clips">Generar clips</string>
-    <string name="editor_animation_none">Ninguna</string>
-    <string name="editor_animation_zoom_in">Zoom in</string>
-    <string name="editor_animation_zoom_out">Zoom out</string>
-    <string name="editor_animation_fade">Desvanecer</string>
-    <string name="editor_animation_slide_up">Deslizar arriba</string>
 
     <string name="editor_review_title">Revisa tus clips</string>
-    <string name="editor_review_subtitle">Agrega un subtítulo y elige una animación para cada clip.</string>
+    <string name="editor_review_subtitle">Comprueba el recorte, mira la preview y edita el subtítulo de cada clip.</string>
     <string name="editor_clip_number">Clip %1$d</string>
     <string name="editor_score">Puntaje %1$d%</string>
     <string name="editor_subtitle_label">Subtítulo</string>
     <string name="editor_subtitle_placeholder">Escribe el texto que aparecerá en este clip</string>
+    <string name="editor_preparing_clips">Preparando previews y subtítulos… La primera vez puede descargar el modelo de voz local.</string>
+    <string name="editor_preview_unavailable">Preview no disponible</string>
+    <string name="editor_subtitles_unavailable">No pudimos transcribir el audio. Puedes escribir los subtítulos manualmente.</string>
     <string name="editor_export">Exportar clips</string>
     <string name="editor_back">Volver</string>
 
@@ -56,6 +57,7 @@
     <string name="editor_error_analysis">No pudimos analizar el video. Inténtalo de nuevo.</string>
     <string name="editor_error_export">No pudimos exportar los clips. Inténtalo de nuevo.</string>
     <string name="editor_error_open">No pudimos abrir el video. Verifica que haya una app instalada para reproducirlo.</string>
+    <string name="editor_error_transcription">No pudimos generar los subtítulos automáticos. Puedes escribirlos manualmente.</string>
     <string name="editor_error_ffmpeg">No se encontró FFmpeg con soporte de subtítulos. Instala FFmpeg con libass y freetype para exportar en Desktop.</string>
     <string name="editor_error_unsupported">Esta función está disponible solo en Android y Desktop.</string>
 

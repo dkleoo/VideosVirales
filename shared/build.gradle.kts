@@ -66,6 +66,7 @@ kotlin {
             implementation(libs.androidx.media3.transformer)
             implementation(libs.koin.android)
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.vosk.android)
         }
         jvmMain.dependencies {
             implementation(libs.ktor.client.okhttp)

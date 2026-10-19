@@ -16,10 +16,12 @@ fun PrimaryButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     Button(
         onClick = onClick,
         modifier = modifier,
+        enabled = enabled,
         shape = RoundedCornerShape(Radius.Md),
         colors = ButtonDefaults.buttonColors(
             containerColor = ColorApp.Primary,

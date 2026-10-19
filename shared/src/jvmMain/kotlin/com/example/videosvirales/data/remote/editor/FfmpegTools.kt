@@ -64,8 +64,7 @@ object FfmpegTools {
         }
     }
 
-    fun probeDurationMs(path: String): Long {
-        val command = listOf(
+    fun probeDurationMs(path: String): Long {        val command = listOf(
             ffprobePath,
             "-v",
             "error",
@@ -84,6 +83,28 @@ object FfmpegTools {
             throw exception
         } catch (exception: Exception) {
             throw EditorException(EditorError.FFMPEG_MISSING, exception)
+        }
+    }
+
+    fun hasAudio(path: String): Boolean {
+        val command = listOf(
+            ffprobePath,
+            "-v",
+            "error",
+            "-select_streams",
+            "a",
+            "-show_entries",
+            "stream=index",
+            "-of",
+            "csv=p=0",
+            path,
+        )
+        return try {
+            val process = ProcessBuilder(command).redirectErrorStream(true).start()
+            val output = process.inputStream.bufferedReader().use { it.readText() }
+            process.waitFor() == 0 && output.isNotBlank()
+        } catch (exception: Exception) {
+            false
         }
     }
 

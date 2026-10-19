@@ -26,20 +26,21 @@
     <string name="editor_clip_count">Quantidade de clipes</string>
     <string name="editor_clip_duration">Duração por clipe</string>
     <string name="editor_seconds">%1$d s</string>
-    <string name="editor_animation">Animação</string>
+    <string name="editor_aspect">Formato</string>
+    <string name="editor_aspect_9_16">9:16</string>
+    <string name="editor_aspect_1_1">1:1</string>
+    <string name="editor_aspect_16_9">16:9</string>
     <string name="editor_generate_clips">Gerar clipes</string>
-    <string name="editor_animation_none">Nenhuma</string>
-    <string name="editor_animation_zoom_in">Zoom in</string>
-    <string name="editor_animation_zoom_out">Zoom out</string>
-    <string name="editor_animation_fade">Desvanecer</string>
-    <string name="editor_animation_slide_up">Deslizar para cima</string>
 
     <string name="editor_review_title">Revise seus clipes</string>
-    <string name="editor_review_subtitle">Adicione uma legenda e escolha uma animação para cada clipe.</string>
+    <string name="editor_review_subtitle">Confira o recorte, veja a prévia e edite a legenda de cada clipe.</string>
     <string name="editor_clip_number">Clipe %1$d</string>
     <string name="editor_score">Pontuação %1$d%</string>
     <string name="editor_subtitle_label">Legenda</string>
     <string name="editor_subtitle_placeholder">Escreva o texto que aparecerá neste clipe</string>
+    <string name="editor_preparing_clips">Preparando prévias e legendas… Na primeira vez pode baixar o modelo de voz local.</string>
+    <string name="editor_preview_unavailable">Prévia indisponível</string>
+    <string name="editor_subtitles_unavailable">Não foi possível transcrever o áudio. Você pode escrever as legendas manualmente.</string>
     <string name="editor_export">Exportar clipes</string>
     <string name="editor_back">Voltar</string>
 
@@ -56,6 +57,7 @@
     <string name="editor_error_analysis">Não foi possível analisar o vídeo. Tente novamente.</string>
     <string name="editor_error_export">Não foi possível exportar os clipes. Tente novamente.</string>
     <string name="editor_error_open">Não foi possível abrir o vídeo. Verifique se há um app instalado para reproduzi-lo.</string>
+    <string name="editor_error_transcription">Não foi possível gerar as legendas automáticas. Você pode escrevê-las manualmente.</string>
     <string name="editor_error_ffmpeg">FFmpeg com suporte a legendas não foi encontrado. Instale FFmpeg com libass e freetype para exportar no Desktop.</string>
     <string name="editor_error_unsupported">Este recurso está disponível apenas no Android e Desktop.</string>
 

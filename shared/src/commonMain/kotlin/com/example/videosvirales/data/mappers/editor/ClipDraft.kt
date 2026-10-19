@@ -6,7 +6,7 @@ data class ClipDraft(
     val endMs: Long,
     val score: Float,
     val subtitle: String,
-    val animation: ClipAnimation,
+    val aspect: VideoAspect,
 ) {
     val durationMs: Long
         get() = endMs - startMs

@@ -26,20 +26,21 @@
     <string name="editor_clip_count">Number of clips</string>
     <string name="editor_clip_duration">Duration per clip</string>
     <string name="editor_seconds">%1$d s</string>
-    <string name="editor_animation">Animation</string>
+    <string name="editor_aspect">Format</string>
+    <string name="editor_aspect_9_16">9:16</string>
+    <string name="editor_aspect_1_1">1:1</string>
+    <string name="editor_aspect_16_9">16:9</string>
     <string name="editor_generate_clips">Generate clips</string>
-    <string name="editor_animation_none">None</string>
-    <string name="editor_animation_zoom_in">Zoom in</string>
-    <string name="editor_animation_zoom_out">Zoom out</string>
-    <string name="editor_animation_fade">Fade</string>
-    <string name="editor_animation_slide_up">Slide up</string>
 
     <string name="editor_review_title">Review your clips</string>
-    <string name="editor_review_subtitle">Add a subtitle and choose an animation for each clip.</string>
+    <string name="editor_review_subtitle">Check the crop, preview each clip and edit its subtitle.</string>
     <string name="editor_clip_number">Clip %1$d</string>
     <string name="editor_score">Score %1$d%</string>
     <string name="editor_subtitle_label">Subtitle</string>
     <string name="editor_subtitle_placeholder">Write the text shown on this clip</string>
+    <string name="editor_preparing_clips">Preparing previews and subtitles… The first time may download the local voice model.</string>
+    <string name="editor_preview_unavailable">Preview unavailable</string>
+    <string name="editor_subtitles_unavailable">We couldn\'t transcribe the audio. You can write the subtitles manually.</string>
     <string name="editor_export">Export clips</string>
     <string name="editor_back">Back</string>
 
@@ -56,6 +57,7 @@
     <string name="editor_error_analysis">We couldn\'t analyze the video. Please try again.</string>
     <string name="editor_error_export">We couldn\'t export the clips. Please try again.</string>
     <string name="editor_error_open">We couldn\'t open the video. Check that an app is installed to play it.</string>
+    <string name="editor_error_transcription">We couldn\'t generate automatic subtitles. You can write them manually.</string>
     <string name="editor_error_ffmpeg">FFmpeg with subtitle support was not found. Install FFmpeg with libass and freetype to export on Desktop.</string>
     <string name="editor_error_unsupported">This feature is available on Android and Desktop only.</string>
 

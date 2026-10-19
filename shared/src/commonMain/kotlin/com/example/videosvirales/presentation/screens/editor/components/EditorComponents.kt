@@ -20,8 +20,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import com.example.videosvirales.data.mappers.editor.ClipAnimation
 import com.example.videosvirales.data.mappers.editor.EditorError
+import com.example.videosvirales.data.mappers.editor.VideoAspect
 import com.example.videosvirales.presentation.screens.editor.EditorStep
 import com.example.videosvirales.presentation.theme.AppTextStyle
 import com.example.videosvirales.presentation.theme.ColorApp
@@ -31,16 +31,15 @@ import com.example.videosvirales.presentation.theme.Spacing
 import com.example.videosvirales.presentation.theme.tiendasOnTextStyle
 import org.jetbrains.compose.resources.stringResource
 import videosvirales.shared.generated.resources.Res
-import videosvirales.shared.generated.resources.editor_animation_fade
-import videosvirales.shared.generated.resources.editor_animation_none
-import videosvirales.shared.generated.resources.editor_animation_slide_up
-import videosvirales.shared.generated.resources.editor_animation_zoom_in
-import videosvirales.shared.generated.resources.editor_animation_zoom_out
+import videosvirales.shared.generated.resources.editor_aspect_1_1
+import videosvirales.shared.generated.resources.editor_aspect_16_9
+import videosvirales.shared.generated.resources.editor_aspect_9_16
 import videosvirales.shared.generated.resources.editor_error_analysis
 import videosvirales.shared.generated.resources.editor_error_export
 import videosvirales.shared.generated.resources.editor_error_ffmpeg
 import videosvirales.shared.generated.resources.editor_error_no_video
 import videosvirales.shared.generated.resources.editor_error_open
+import videosvirales.shared.generated.resources.editor_error_transcription
 import videosvirales.shared.generated.resources.editor_error_unsupported
 import videosvirales.shared.generated.resources.editor_step_progress
 import videosvirales.shared.generated.resources.editor_title
@@ -115,22 +114,22 @@ fun EditorErrorBanner(error: EditorError) {
 }
 
 @Composable
-fun AnimationSelector(
-    selected: ClipAnimation,
-    onSelect: (ClipAnimation) -> Unit,
+fun AspectSelector(
+    selected: VideoAspect,
+    onSelect: (VideoAspect) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier.horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(Spacing.Sm),
     ) {
-        ClipAnimation.entries.forEach { animation ->
+        VideoAspect.entries.forEach { aspect ->
             FilterChip(
-                selected = animation == selected,
-                onClick = { onSelect(animation) },
+                selected = aspect == selected,
+                onClick = { onSelect(aspect) },
                 label = {
                     Text(
-                        text = animationLabel(animation),
+                        text = aspectLabel(aspect),
                         style = tiendasOnTextStyle(AppTextStyle.Caption),
                     )
                 },
@@ -159,12 +158,10 @@ fun SectionValue(text: String) {
 }
 
 @Composable
-fun animationLabel(animation: ClipAnimation): String = when (animation) {
-    ClipAnimation.NONE -> stringResource(Res.string.editor_animation_none)
-    ClipAnimation.ZOOM_IN -> stringResource(Res.string.editor_animation_zoom_in)
-    ClipAnimation.ZOOM_OUT -> stringResource(Res.string.editor_animation_zoom_out)
-    ClipAnimation.FADE -> stringResource(Res.string.editor_animation_fade)
-    ClipAnimation.SLIDE_UP -> stringResource(Res.string.editor_animation_slide_up)
+private fun aspectLabel(aspect: VideoAspect): String = when (aspect) {
+    VideoAspect.PORTRAIT_9_16 -> stringResource(Res.string.editor_aspect_9_16)
+    VideoAspect.SQUARE_1_1 -> stringResource(Res.string.editor_aspect_1_1)
+    VideoAspect.LANDSCAPE_16_9 -> stringResource(Res.string.editor_aspect_16_9)
 }
 
 @Composable
@@ -173,6 +170,7 @@ fun editorErrorMessage(error: EditorError): String = when (error) {
     EditorError.ANALYSIS_FAILED -> stringResource(Res.string.editor_error_analysis)
     EditorError.EXPORT_FAILED -> stringResource(Res.string.editor_error_export)
     EditorError.OPEN_FAILED -> stringResource(Res.string.editor_error_open)
+    EditorError.TRANSCRIPTION_FAILED -> stringResource(Res.string.editor_error_transcription)
     EditorError.FFMPEG_MISSING -> stringResource(Res.string.editor_error_ffmpeg)
     EditorError.UNSUPPORTED -> stringResource(Res.string.editor_error_unsupported)
 }

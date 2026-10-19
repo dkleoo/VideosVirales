@@ -12,7 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.example.videosvirales.data.mappers.editor.ClipAnimation
+import com.example.videosvirales.data.mappers.editor.VideoAspect
 import com.example.videosvirales.presentation.screens.components.InfoCard
 import com.example.videosvirales.presentation.screens.components.PrimaryButton
 import com.example.videosvirales.presentation.screens.components.SecondaryButton
@@ -23,7 +23,7 @@ import com.example.videosvirales.presentation.theme.tiendasOnTextStyle
 import com.example.videosvirales.presentation.util.formatDuration
 import org.jetbrains.compose.resources.stringResource
 import videosvirales.shared.generated.resources.Res
-import videosvirales.shared.generated.resources.editor_animation
+import videosvirales.shared.generated.resources.editor_aspect
 import videosvirales.shared.generated.resources.editor_change_video
 import videosvirales.shared.generated.resources.editor_clip_count
 import videosvirales.shared.generated.resources.editor_clip_duration
@@ -39,7 +39,7 @@ fun SettingsStep(
     state: EditorScreenState,
     onClipCountChange: (Int) -> Unit,
     onClipDurationChange: (Int) -> Unit,
-    onAnimationChange: (ClipAnimation) -> Unit,
+    onAspectChange: (VideoAspect) -> Unit,
     onGenerate: () -> Unit,
     onPick: () -> Unit,
 ) {
@@ -102,11 +102,11 @@ fun SettingsStep(
         )
 
         Spacer(Modifier.height(Spacing.Lg))
-        SectionTitle(stringResource(Res.string.editor_animation))
+        SectionTitle(stringResource(Res.string.editor_aspect))
         Spacer(Modifier.height(Spacing.Sm))
-        AnimationSelector(
-            selected = state.animation,
-            onSelect = onAnimationChange,
+        AspectSelector(
+            selected = state.aspect,
+            onSelect = onAspectChange,
         )
 
         Spacer(Modifier.height(Spacing.Xl))

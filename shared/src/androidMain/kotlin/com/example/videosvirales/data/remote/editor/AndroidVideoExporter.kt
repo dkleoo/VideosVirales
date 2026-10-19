@@ -19,7 +19,6 @@ import androidx.media3.transformer.Effects
 import androidx.media3.transformer.ExportException
 import androidx.media3.transformer.ExportResult
 import androidx.media3.transformer.Transformer
-import com.example.videosvirales.data.mappers.editor.ClipAnimation
 import com.example.videosvirales.data.mappers.editor.ClipDraft
 import com.example.videosvirales.data.mappers.editor.EditorError
 import com.example.videosvirales.data.mappers.editor.ExportedClip
@@ -110,41 +109,13 @@ class AndroidVideoExporter(
     private fun buildVideoEffects(clip: ClipDraft): List<Effect> = buildList {
         add(
             Presentation.createForWidthAndHeight(
-                WIDTH,
-                HEIGHT,
+                clip.aspect.width,
+                clip.aspect.height,
                 Presentation.LAYOUT_SCALE_TO_FIT_WITH_CROP,
             )
         )
-        val durationUs = clip.durationMs * 1_000
-        when (clip.animation) {
-            ClipAnimation.ZOOM_IN -> add(
-                KenBurnsTransformation(
-                    fromScale = 1f,
-                    toScale = 1.12f,
-                    durationUs = durationUs,
-                )
-            )
-            ClipAnimation.ZOOM_OUT -> add(
-                KenBurnsTransformation(
-                    fromScale = 1.12f,
-                    toScale = 1f,
-                    durationUs = durationUs,
-                )
-            )
-            else -> Unit
-        }
         if (clip.subtitle.isNotBlank()) {
-            add(
-                OverlayEffect(
-                    listOf(
-                        AnimatedSubtitleOverlay(
-                            text = clip.subtitle,
-                            durationUs = durationUs,
-                            animation = clip.animation,
-                        )
-                    )
-                )
-            )
+            add(OverlayEffect(listOf(SubtitleOverlay(clip.subtitle))))
         }
     }
 
@@ -215,9 +186,4 @@ class AndroidVideoExporter(
         val path: String,
         val uri: String,
     )
-
-    private companion object {
-        const val WIDTH = 1080
-        const val HEIGHT = 1920
-    }
 }

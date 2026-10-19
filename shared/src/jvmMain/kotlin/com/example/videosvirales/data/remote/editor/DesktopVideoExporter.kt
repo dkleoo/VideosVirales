@@ -1,6 +1,5 @@
 package com.example.videosvirales.data.remote.editor
 
-import com.example.videosvirales.data.mappers.editor.ClipAnimation
 import com.example.videosvirales.data.mappers.editor.ClipDraft
 import com.example.videosvirales.data.mappers.editor.EditorError
 import com.example.videosvirales.data.mappers.editor.ExportedClip
@@ -21,10 +20,7 @@ class DesktopVideoExporter {
         try {
             FfmpegTools.requireAvailable()
             val hasSubtitle = clip.subtitle.isNotBlank()
-            val hasZoom = clip.animation == ClipAnimation.ZOOM_IN ||
-                clip.animation == ClipAnimation.ZOOM_OUT
             if (hasSubtitle) FfmpegTools.requireFilters("subtitles")
-            if (hasZoom) FfmpegTools.requireFilters("zoompan")
 
             val outputDir = File(outputDirectory).apply { mkdirs() }
             val outputFile = File(
@@ -39,7 +35,8 @@ class DesktopVideoExporter {
                         file = File(temporaryDirectory, SUBTITLE_FILE),
                         text = clip.subtitle,
                         durationMs = clip.durationMs,
-                        animation = clip.animation,
+                        width = clip.aspect.width,
+                        height = clip.aspect.height,
                     )
                 }
 
@@ -55,7 +52,7 @@ class DesktopVideoExporter {
                         add("-t")
                         add(formatSeconds(clip.durationMs))
                         add("-vf")
-                        add(buildFilters(clip, hasSubtitle, hasZoom))
+                        add(buildFilters(clip, hasSubtitle))
                         add("-c:v")
                         add("libx264")
                         add("-preset")
@@ -94,26 +91,14 @@ class DesktopVideoExporter {
     private fun buildFilters(
         clip: ClipDraft,
         hasSubtitle: Boolean,
-        hasZoom: Boolean,
     ): String = buildList {
-        add("scale=1080:1920:force_original_aspect_ratio=increase")
-        add("crop=1080:1920")
+        add("scale=${clip.aspect.width}:${clip.aspect.height}:force_original_aspect_ratio=increase")
+        add("crop=${clip.aspect.width}:${clip.aspect.height}")
         add("setsar=1")
-        if (hasZoom) {
-            add(
-                when (clip.animation) {
-                    ClipAnimation.ZOOM_IN ->
-                        "zoompan=z='min(1.0+0.0006*on,1.12)':d=1:s=1080x1920:fps=30"
-                    ClipAnimation.ZOOM_OUT ->
-                        "zoompan=z='max(1.12-0.0006*on,1.0)':d=1:s=1080x1920:fps=30"
-                    else -> ""
-                }
-            )
-        }
         if (hasSubtitle) {
             add("subtitles=$SUBTITLE_FILE")
         }
-    }.filter { it.isNotBlank() }.joinToString(",")
+    }.joinToString(",")
 
     private fun VideoFile.localPath(): String =
         if (uri.startsWith("file:")) {

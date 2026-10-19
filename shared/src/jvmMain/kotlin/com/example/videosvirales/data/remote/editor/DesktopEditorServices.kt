@@ -3,6 +3,7 @@ package com.example.videosvirales.data.remote.editor
 import com.example.videosvirales.data.mappers.editor.ClipDraft
 import com.example.videosvirales.data.mappers.editor.EditorError
 import com.example.videosvirales.data.mappers.editor.ExportedClip
+import com.example.videosvirales.data.mappers.editor.VideoAspect
 import com.example.videosvirales.data.mappers.editor.VideoFile
 import com.example.videosvirales.data.mappers.editor.VideoSignal
 import com.example.videosvirales.data.repositoyImpl.editor.EditorException
@@ -14,6 +15,8 @@ import java.io.File
 class DesktopEditorServices : EditorServices {
     private val analyzer = DesktopVideoAnalyzer()
     private val exporter = DesktopVideoExporter()
+    private val thumbnailer = DesktopVideoThumbnailer()
+    private val transcriber = DesktopSpeechTranscriber()
 
     override suspend fun loadVideo(uri: String): VideoFile = withContext(Dispatchers.IO) {
         try {
@@ -45,6 +48,18 @@ class DesktopEditorServices : EditorServices {
         clip: ClipDraft,
         outputDirectory: String,
     ): ExportedClip = exporter.export(video, clip, outputDirectory)
+
+    override suspend fun loadThumbnail(
+        video: VideoFile,
+        timestampMs: Long,
+        aspect: VideoAspect,
+    ): ByteArray = thumbnailer.load(video, timestampMs, aspect)
+
+    override suspend fun transcribe(
+        video: VideoFile,
+        startMs: Long,
+        endMs: Long,
+    ): String = transcriber.transcribe(video, startMs, endMs)
 
     override suspend fun openClip(uri: String) = withContext(Dispatchers.IO) {
         try {

@@ -2,6 +2,7 @@ package com.example.videosvirales.domain.repository.editor
 
 import com.example.videosvirales.data.mappers.editor.ClipDraft
 import com.example.videosvirales.data.mappers.editor.ExportedClip
+import com.example.videosvirales.data.mappers.editor.VideoAspect
 import com.example.videosvirales.data.mappers.editor.VideoFile
 import com.example.videosvirales.data.mappers.editor.VideoSignal
 import com.example.videosvirales.data.repositoyImpl.editor.EditorResult
@@ -19,6 +20,18 @@ interface EditorRepository {
         clip: ClipDraft,
         outputDirectory: String,
     ): EditorResult<ExportedClip>
+
+    suspend fun loadThumbnail(
+        video: VideoFile,
+        timestampMs: Long,
+        aspect: VideoAspect,
+    ): EditorResult<ByteArray>
+
+    suspend fun transcribe(
+        video: VideoFile,
+        startMs: Long,
+        endMs: Long,
+    ): EditorResult<String>
 
     suspend fun openClip(clip: ExportedClip): EditorResult<Unit>
 

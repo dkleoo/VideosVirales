@@ -10,9 +10,12 @@ import com.example.videosvirales.domain.repository.home.HomeRepository
 import com.example.videosvirales.domain.useCase.editor.AnalyzeVideoUseCase
 import com.example.videosvirales.domain.useCase.editor.BuildClipsUseCase
 import com.example.videosvirales.domain.useCase.editor.ExportClipsUseCase
+import com.example.videosvirales.domain.useCase.editor.LoadClipThumbnailUseCase
 import com.example.videosvirales.domain.useCase.editor.LoadVideoUseCase
 import com.example.videosvirales.domain.useCase.editor.OpenClipUseCase
+import com.example.videosvirales.domain.useCase.editor.TranscribeClipUseCase
 import com.example.videosvirales.domain.useCase.home.GetHomeInfoUseCase
+import com.example.videosvirales.data.params.EditorViewModelParams
 import com.example.videosvirales.presentation.screens.editor.EditorViewModel
 import com.example.videosvirales.presentation.screens.home.HomeViewModel
 import org.koin.dsl.module
@@ -32,5 +35,19 @@ val appModule = module {
     factory { BuildClipsUseCase() }
     factory { ExportClipsUseCase(get()) }
     factory { OpenClipUseCase(get()) }
-    factory { EditorViewModel(get(), get(), get(), get(), get()) }
+    factory { LoadClipThumbnailUseCase(get()) }
+    factory { TranscribeClipUseCase(get()) }
+    factory {
+        EditorViewModel(
+            EditorViewModelParams(
+                loadVideo = get(),
+                analyzeVideo = get(),
+                buildClips = get(),
+                exportClips = get(),
+                openClip = get(),
+                loadClipThumbnail = get(),
+                transcribeClip = get(),
+            )
+        )
+    }
 }

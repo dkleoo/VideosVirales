@@ -11,6 +11,7 @@ import androidx.core.content.FileProvider
 import com.example.videosvirales.data.mappers.editor.ClipDraft
 import com.example.videosvirales.data.mappers.editor.EditorError
 import com.example.videosvirales.data.mappers.editor.ExportedClip
+import com.example.videosvirales.data.mappers.editor.VideoAspect
 import com.example.videosvirales.data.mappers.editor.VideoFile
 import com.example.videosvirales.data.mappers.editor.VideoSignal
 import com.example.videosvirales.data.repositoyImpl.editor.EditorException
@@ -23,6 +24,8 @@ class AndroidEditorServices(
 ) : EditorServices {
     private val analyzer = AndroidVideoAnalyzer(context)
     private val exporter = AndroidVideoExporter(context)
+    private val thumbnailer = AndroidVideoThumbnailer(context)
+    private val transcriber = AndroidVoskTranscriber(context)
 
     override suspend fun loadVideo(uri: String): VideoFile = withContext(Dispatchers.IO) {
         try {
@@ -61,6 +64,18 @@ class AndroidEditorServices(
         clip: ClipDraft,
         outputDirectory: String,
     ): ExportedClip = exporter.export(video, clip, outputDirectory)
+
+    override suspend fun loadThumbnail(
+        video: VideoFile,
+        timestampMs: Long,
+        aspect: VideoAspect,
+    ): ByteArray = thumbnailer.load(video, timestampMs, aspect)
+
+    override suspend fun transcribe(
+        video: VideoFile,
+        startMs: Long,
+        endMs: Long,
+    ): String = transcriber.transcribe(video, startMs, endMs)
 
     override suspend fun openClip(uri: String) = withContext(Dispatchers.Main) {
         try {

@@ -35,6 +35,7 @@ shared/src/commonMain/kotlin/com/example/videosvirales/
 │   └── useCase/
 ├── data/
 │   ├── mappers/
+│   ├── params/
 │   ├── repositoyImpl/
 │   └── remote/
 │       ├── editor/
@@ -60,18 +61,19 @@ Flujo:
 ```text
 Subir video
  → Analizar mejores momentos (heurística local)
-   → Configurar cantidad y duración
-     → Editar subtítulos y animación por clip
-       → Exportar MP4 vertical 1080x1920
+   → Configurar cantidad, duración y formato
+     → Revisar previews y subtítulos por clip
+       → Exportar MP4 en 9:16, 1:1 o 16:9
 ```
 
-- Android: selección con el selector del sistema, análisis con `MediaMetadataRetriever` y exportación con Media3 Transformer.
-- Desktop: selección con diálogo nativo, análisis y exportación con FFmpeg.
-- Desktop requiere un FFmpeg que incluya `libass`, `freetype` y `zoompan`. En macOS se puede usar `ffmpeg-full` de Homebrew.
+- Android: selección con el selector del sistema, análisis con `MediaMetadataRetriever`, previews con frames recortados, transcripción con Vosk offline y exportación con Media3 Transformer.
+- Desktop: selección con diálogo nativo, análisis y exportación con FFmpeg, previews con frames recortados y transcripción con `whisper-cli`.
+- El video se ajusta al formato elegido recortando el excedente desde el centro.
+- Desktop requiere un FFmpeg que incluya `libass` y `freetype`. En macOS se puede usar `ffmpeg-full` de Homebrew.
+- La primera transcripción descarga un modelo de voz local (Vosk en Android, whisper.cpp en Desktop). Después funciona sin conexión.
 - Android guarda los clips en `Movies/VideosVirales`; Desktop en `~/Movies/VideosVirales`.
 - Cada clip tiene el botón `Abrir video`, que lo reproduce con el visor o programa predeterminado del sistema.
 - iOS no implementa este flujo por ahora.
-- Los subtítulos son editables: la heurística no transcribe audio.
 
 ## Ejecutar
 
