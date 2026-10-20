@@ -6,6 +6,8 @@
     <string name="home_error">We couldn\'t load the information.</string>
     <string name="home_retry">Retry</string>
     <string name="home_create_clips">Create clips</string>
+    <string name="home_manual_trim">Trim a video</string>
+    <string name="home_merge_videos">Merge videos</string>
 
     <string name="editor_title">Clip studio</string>
     <string name="editor_step_progress">Step %1$d of 4</string>
@@ -16,6 +18,37 @@
     <string name="editor_change_video">Change video</string>
     <string name="editor_retry">Retry</string>
     <string name="editor_loading_video">Loading video…</string>
+    <string name="editor_loading_videos">Loading videos…</string>
+    <string name="editor_manual_title">Trim your clip</string>
+    <string name="editor_manual_subtitle">Choose where the segment starts and ends.</string>
+    <string name="editor_manual_start">Start</string>
+    <string name="editor_manual_end">End</string>
+    <string name="editor_manual_total">Segment duration</string>
+    <string name="editor_manual_generate_subtitle">Generate subtitle</string>
+    <string name="editor_manual_export">Export clip</string>
+    <string name="editor_narration">Narrator (Spanish)</string>
+    <string name="editor_narration_scene">Scene narrator (Spanish)</string>
+    <string name="editor_narration_section">Narrator per scene</string>
+    <string name="editor_narration_section_help">Add the voice text for each clip.</string>
+    <string name="editor_narration_placeholder">Write the text the narrator will say</string>
+    <string name="editor_audio_scene">Scene audio</string>
+    <string name="editor_audio_clip">Clip audio</string>
+    <string name="editor_audio_full">Audio for the whole video</string>
+    <string name="editor_audio_none">No custom audio</string>
+    <string name="editor_audio_pick">Pick audio</string>
+    <string name="editor_audio_change">Change audio</string>
+    <string name="editor_audio_remove">Remove</string>
+    <string name="editor_audio_replaces_narrator">Custom audio replaces the narrator for that scene.</string>
+    <string name="editor_move_up">Move up</string>
+    <string name="editor_move_down">Move down</string>
+    <string name="editor_preview_play">Preview video</string>
+    <string name="editor_merge_title">Merge your videos</string>
+    <string name="editor_merge_subtitle">The videos will be joined in the selected order. Each one can have its own narrator.</string>
+    <string name="editor_merge_pick">Choose videos</string>
+    <string name="editor_merge_change">Choose other videos</string>
+    <string name="editor_merge_empty">Select at least two videos.</string>
+    <string name="editor_merge_order">Merge order</string>
+    <string name="editor_merge_export">Merge and export</string>
 
     <string name="editor_analyzing_title">Finding the best moments</string>
     <string name="editor_analyzing_subtitle">The local analysis is reviewing visual changes in your video.</string>
@@ -33,7 +66,7 @@
     <string name="editor_generate_clips">Generate clips</string>
 
     <string name="editor_review_title">Review your clips</string>
-    <string name="editor_review_subtitle">Check the crop, preview each clip and edit its subtitle.</string>
+    <string name="editor_review_subtitle">Check the crop, preview each clip and add a narrator or subtitle.</string>
     <string name="editor_clip_number">Clip %1$d</string>
     <string name="editor_score">Score %1$d%</string>
     <string name="editor_subtitle_label">Subtitle</string>
@@ -47,19 +80,24 @@
     <string name="editor_exporting_title">Exporting clips</string>
     <string name="editor_exporting_subtitle">Please keep the app open while the videos are rendered.</string>
     <string name="editor_export_progress">%1$d of %2$d clips</string>
-    <string name="editor_done_title">Your clips are ready</string>
-    <string name="editor_done_subtitle">The vertical videos were saved on this device.</string>
+    <string name="editor_done_title">Your video is ready</string>
+    <string name="editor_done_subtitle">The videos were saved on this device.</string>
     <string name="editor_done_clip">Clip %1$d</string>
+    <string name="editor_done_video">Video %1$d</string>
     <string name="editor_open_clip">Open video</string>
-    <string name="editor_restart">Create more clips</string>
+    <string name="editor_restart">Create another video</string>
 
     <string name="editor_error_no_video">We couldn\'t read that video. Please choose another file.</string>
     <string name="editor_error_analysis">We couldn\'t analyze the video. Please try again.</string>
     <string name="editor_error_export">We couldn\'t export the clips. Please try again.</string>
     <string name="editor_error_open">We couldn\'t open the video. Check that an app is installed to play it.</string>
     <string name="editor_error_transcription">We couldn\'t generate automatic subtitles. You can write them manually.</string>
+    <string name="editor_error_tts">We couldn\'t generate the narrator voice. Check that a text-to-speech voice is installed.</string>
+    <string name="editor_error_merge">Select at least two videos to merge.</string>
     <string name="editor_error_ffmpeg">FFmpeg with subtitle support was not found. Install FFmpeg with libass and freetype to export on Desktop.</string>
     <string name="editor_error_unsupported">This feature is available on Android and Desktop only.</string>
 
     <string name="picker_video_title">Select a video</string>
+    <string name="picker_videos_title">Select videos</string>
+    <string name="picker_audio_title">Select audio</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.example.videosvirales.data.remote.editor
 
+import com.example.videosvirales.data.mappers.editor.AudioFile
 import com.example.videosvirales.data.mappers.editor.ClipDraft
 import com.example.videosvirales.data.mappers.editor.EditorError
 import com.example.videosvirales.data.mappers.editor.ExportedClip
@@ -21,7 +22,20 @@ class UnsupportedEditorServices : EditorServices {
         video: VideoFile,
         clip: ClipDraft,
         outputDirectory: String,
+        narrationText: String,
     ): ExportedClip = throw EditorException(EditorError.UNSUPPORTED)
+
+    override suspend fun mergeVideos(
+        videos: List<VideoFile>,
+        narrations: List<String>,
+        sceneAudios: List<AudioFile?>,
+        fullAudio: AudioFile?,
+        aspect: VideoAspect,
+        outputDirectory: String,
+    ): ExportedClip = throw EditorException(EditorError.UNSUPPORTED)
+
+    override suspend fun loadAudio(uri: String): AudioFile =
+        throw EditorException(EditorError.UNSUPPORTED)
 
     override suspend fun loadThumbnail(
         video: VideoFile,

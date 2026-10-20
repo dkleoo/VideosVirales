@@ -15,6 +15,7 @@ import com.example.videosvirales.data.mappers.editor.ExportedClip
 import com.example.videosvirales.presentation.screens.components.InfoCard
 import com.example.videosvirales.presentation.screens.components.PrimaryButton
 import com.example.videosvirales.presentation.screens.components.SecondaryButton
+import com.example.videosvirales.presentation.screens.editor.EditorMode
 import com.example.videosvirales.presentation.screens.editor.EditorScreenState
 import com.example.videosvirales.presentation.theme.AppTextStyle
 import com.example.videosvirales.presentation.theme.ColorApp
@@ -25,6 +26,7 @@ import videosvirales.shared.generated.resources.Res
 import videosvirales.shared.generated.resources.editor_done_clip
 import videosvirales.shared.generated.resources.editor_done_subtitle
 import videosvirales.shared.generated.resources.editor_done_title
+import videosvirales.shared.generated.resources.editor_done_video
 import videosvirales.shared.generated.resources.editor_export_progress
 import videosvirales.shared.generated.resources.editor_exporting_subtitle
 import videosvirales.shared.generated.resources.editor_exporting_title
@@ -34,7 +36,7 @@ import kotlin.math.roundToInt
 
 @Composable
 fun ExportStep(state: EditorScreenState) {
-    val total = state.clips.size
+    val total = if (state.mode == EditorMode.AUTO_CLIPS) state.clips.size else 1
     val current = (state.progress.coerceIn(0f, 1f) * total).roundToInt().coerceIn(0, total)
 
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -92,7 +94,14 @@ fun DoneStep(
 
         state.exportedClips.forEach { clip ->
             InfoCard(
-                title = stringResource(Res.string.editor_done_clip, clip.index),
+                title = stringResource(
+                    if (state.mode == EditorMode.AUTO_CLIPS) {
+                        Res.string.editor_done_clip
+                    } else {
+                        Res.string.editor_done_video
+                    },
+                    clip.index,
+                ),
                 value = clip.path,
             )
             Spacer(Modifier.height(Spacing.Sm))

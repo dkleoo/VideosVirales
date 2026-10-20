@@ -11,33 +11,46 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import com.example.videosvirales.di.koinScreenModel
 import com.example.videosvirales.platform.picker.rememberVideoUriPicker
+import com.example.videosvirales.platform.picker.rememberVideoUrisPicker
 import com.example.videosvirales.presentation.screens.editor.components.AnalysisStep
 import com.example.videosvirales.presentation.screens.editor.components.DoneStep
 import com.example.videosvirales.presentation.screens.editor.components.EditorErrorBanner
 import com.example.videosvirales.presentation.screens.editor.components.EditorHeader
 import com.example.videosvirales.presentation.screens.editor.components.ExportStep
+import com.example.videosvirales.presentation.screens.editor.components.ManualStep
+import com.example.videosvirales.presentation.screens.editor.components.MergeStep
+import com.example.videosvirales.presentation.screens.editor.components.MergeUploadStep
 import com.example.videosvirales.presentation.screens.editor.components.ReviewStep
 import com.example.videosvirales.presentation.screens.editor.components.SettingsStep
 import com.example.videosvirales.presentation.screens.editor.components.UploadStep
 import com.example.videosvirales.presentation.theme.Spacing
 
-class EditorScreen : Screen {
+class EditorScreen(
+    private val mode: EditorMode,
+) : Screen {
     @Composable
     override fun Content() {
         val viewModel = koinScreenModel<EditorViewModel>()
         val state by viewModel.state.collectAsState()
         val pickVideo = rememberVideoUriPicker { uri -> viewModel.onVideoPicked(uri) }
+        val pickVideos = rememberVideoUrisPicker { uris -> viewModel.onVideosPicked(uris) }
+
+        LaunchedEffect(mode, viewModel) {
+            viewModel.setMode(mode)
+        }
 
         EditorContent(
             state = state,
             viewModel = viewModel,
-            onPick = pickVideo,
+            onPickVideo = pickVideo,
+            onPickVideos = pickVideos,
         )
     }
 }
@@ -46,7 +59,8 @@ class EditorScreen : Screen {
 private fun EditorContent(
     state: EditorScreenState,
     viewModel: EditorViewModel,
-    onPick: () -> Unit,
+    onPickVideo: () -> Unit,
+    onPickVideos: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -68,11 +82,15 @@ private fun EditorContent(
         }
 
         when (state.step) {
-            EditorStep.UPLOAD -> UploadStep(
-                state = state,
-                onPick = onPick,
-                onRetry = viewModel::retryAnalysis,
-            )
+            EditorStep.UPLOAD -> if (state.mode == EditorMode.MERGE_VIDEOS) {
+                MergeUploadStep(onPick = onPickVideos)
+            } else {
+                UploadStep(
+                    state = state,
+                    onPick = onPickVideo,
+                    onRetry = viewModel::retryAnalysis,
+                )
+            }
             EditorStep.LOADING_VIDEO,
             EditorStep.ANALYZING -> AnalysisStep(state)
             EditorStep.SETTINGS -> SettingsStep(
@@ -81,14 +99,21 @@ private fun EditorContent(
                 onClipDurationChange = viewModel::updateClipDuration,
                 onAspectChange = viewModel::updateAspect,
                 onGenerate = viewModel::generateClips,
-                onPick = onPick,
+                onPick = onPickVideo,
             )
             EditorStep.REVIEW -> ReviewStep(
                 state = state,
-                onSubtitleChange = viewModel::updateSubtitle,
-                onAspectChange = viewModel::updateAspect,
-                onExport = viewModel::export,
-                onBack = viewModel::backToSettings,
+                viewModel = viewModel,
+            )
+            EditorStep.MANUAL -> ManualStep(
+                state = state,
+                viewModel = viewModel,
+                onPick = onPickVideo,
+            )
+            EditorStep.MERGE -> MergeStep(
+                state = state,
+                viewModel = viewModel,
+                onPick = onPickVideos,
             )
             EditorStep.EXPORTING -> ExportStep(state)
             EditorStep.DONE -> DoneStep(

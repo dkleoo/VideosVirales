@@ -23,4 +23,6 @@ object Sizes {
     val Logo = 96.dp
     val Border = 1.dp
     val StepBar = 4.dp
+    val PreviewHeight = 240.dp
+    val PlayButton = 56.dp
 }

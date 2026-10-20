@@ -70,6 +70,7 @@ kotlin {
         }
         jvmMain.dependencies {
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.piper.jni)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)

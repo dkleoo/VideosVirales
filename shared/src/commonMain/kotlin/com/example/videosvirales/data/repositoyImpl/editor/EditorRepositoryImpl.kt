@@ -3,6 +3,7 @@ package com.example.videosvirales.data.repositoyImpl.editor
 import com.example.videosvirales.data.mappers.editor.ClipDraft
 import com.example.videosvirales.data.mappers.editor.EditorError
 import com.example.videosvirales.data.mappers.editor.ExportedClip
+import com.example.videosvirales.data.mappers.editor.AudioFile
 import com.example.videosvirales.data.mappers.editor.VideoAspect
 import com.example.videosvirales.data.mappers.editor.VideoFile
 import com.example.videosvirales.data.mappers.editor.VideoSignal
@@ -25,8 +26,33 @@ class EditorRepositoryImpl(
         video: VideoFile,
         clip: ClipDraft,
         outputDirectory: String,
+        narrationText: String,
     ): EditorResult<ExportedClip> =
-        safeCall(EditorError.EXPORT_FAILED) { editorServices.exportClip(video, clip, outputDirectory) }
+        safeCall(EditorError.EXPORT_FAILED) {
+            editorServices.exportClip(video, clip, outputDirectory, narrationText)
+        }
+
+    override suspend fun mergeVideos(
+        videos: List<VideoFile>,
+        narrations: List<String>,
+        sceneAudios: List<AudioFile?>,
+        fullAudio: AudioFile?,
+        aspect: VideoAspect,
+        outputDirectory: String,
+    ): EditorResult<ExportedClip> =
+        safeCall(EditorError.EXPORT_FAILED) {
+            editorServices.mergeVideos(
+                videos,
+                narrations,
+                sceneAudios,
+                fullAudio,
+                aspect,
+                outputDirectory,
+            )
+        }
+
+    override suspend fun loadAudio(uri: String): EditorResult<AudioFile> =
+        safeCall(EditorError.NO_VIDEO) { editorServices.loadAudio(uri) }
 
     override suspend fun loadThumbnail(
         video: VideoFile,

@@ -18,10 +18,12 @@ fun SecondaryButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     OutlinedButton(
         onClick = onClick,
         modifier = modifier,
+        enabled = enabled,
         shape = RoundedCornerShape(Radius.Md),
         border = BorderStroke(Sizes.Border, MaterialTheme.colorScheme.outline),
         colors = ButtonDefaults.outlinedButtonColors(

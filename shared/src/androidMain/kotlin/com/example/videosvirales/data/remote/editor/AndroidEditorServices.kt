@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Environment
 import android.provider.OpenableColumns
 import androidx.core.content.FileProvider
+import com.example.videosvirales.data.mappers.editor.AudioFile
 import com.example.videosvirales.data.mappers.editor.ClipDraft
 import com.example.videosvirales.data.mappers.editor.EditorError
 import com.example.videosvirales.data.mappers.editor.ExportedClip
@@ -63,7 +64,34 @@ class AndroidEditorServices(
         video: VideoFile,
         clip: ClipDraft,
         outputDirectory: String,
-    ): ExportedClip = exporter.export(video, clip, outputDirectory)
+        narrationText: String,
+    ): ExportedClip = exporter.export(video, clip, outputDirectory, narrationText)
+
+    override suspend fun mergeVideos(
+        videos: List<VideoFile>,
+        narrations: List<String>,
+        sceneAudios: List<AudioFile?>,
+        fullAudio: AudioFile?,
+        aspect: VideoAspect,
+        outputDirectory: String,
+    ): ExportedClip = exporter.mergeVideos(
+        videos,
+        narrations,
+        sceneAudios,
+        fullAudio,
+        aspect,
+        outputDirectory,
+    )
+
+    override suspend fun loadAudio(uri: String): AudioFile = withContext(Dispatchers.IO) {
+        try {
+            val parsedUri = Uri.parse(uri)
+            val displayName = queryFileInfo(parsedUri).first
+            AudioFile(uri = uri, displayName = displayName)
+        } catch (exception: Exception) {
+            throw EditorException(EditorError.NO_VIDEO, exception)
+        }
+    }
 
     override suspend fun loadThumbnail(
         video: VideoFile,

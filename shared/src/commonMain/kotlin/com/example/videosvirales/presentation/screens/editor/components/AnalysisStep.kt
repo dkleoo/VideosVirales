@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import com.example.videosvirales.presentation.screens.editor.EditorMode
 import com.example.videosvirales.presentation.screens.editor.EditorScreenState
 import com.example.videosvirales.presentation.screens.editor.EditorStep
 import com.example.videosvirales.presentation.theme.AppTextStyle
@@ -26,6 +27,8 @@ import videosvirales.shared.generated.resources.editor_analyzing_progress
 import videosvirales.shared.generated.resources.editor_analyzing_subtitle
 import videosvirales.shared.generated.resources.editor_analyzing_title
 import videosvirales.shared.generated.resources.editor_loading_video
+import videosvirales.shared.generated.resources.editor_loading_videos
+import videosvirales.shared.generated.resources.editor_merge_subtitle
 import kotlin.math.roundToInt
 
 @Composable
@@ -41,7 +44,11 @@ fun AnalysisStep(state: EditorScreenState) {
         CircularProgressIndicator(color = ColorApp.Primary)
         Text(
             text = if (isLoadingVideo) {
-                stringResource(Res.string.editor_loading_video)
+                if (state.mode == EditorMode.MERGE_VIDEOS) {
+                    stringResource(Res.string.editor_loading_videos)
+                } else {
+                    stringResource(Res.string.editor_loading_video)
+                }
             } else {
                 stringResource(Res.string.editor_analyzing_title)
             },
@@ -50,7 +57,11 @@ fun AnalysisStep(state: EditorScreenState) {
         )
         Text(
             text = state.video?.displayName
-                ?: stringResource(Res.string.editor_analyzing_subtitle),
+                ?: if (state.mode == EditorMode.MERGE_VIDEOS) {
+                    stringResource(Res.string.editor_merge_subtitle)
+                } else {
+                    stringResource(Res.string.editor_analyzing_subtitle)
+                },
             style = tiendasOnTextStyle(
                 AppTextStyle.Body,
                 MaterialTheme.colorScheme.onSurfaceVariant,

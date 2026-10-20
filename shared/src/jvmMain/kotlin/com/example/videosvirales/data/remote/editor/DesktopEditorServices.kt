@@ -1,5 +1,6 @@
 package com.example.videosvirales.data.remote.editor
 
+import com.example.videosvirales.data.mappers.editor.AudioFile
 import com.example.videosvirales.data.mappers.editor.ClipDraft
 import com.example.videosvirales.data.mappers.editor.EditorError
 import com.example.videosvirales.data.mappers.editor.ExportedClip
@@ -47,7 +48,38 @@ class DesktopEditorServices : EditorServices {
         video: VideoFile,
         clip: ClipDraft,
         outputDirectory: String,
-    ): ExportedClip = exporter.export(video, clip, outputDirectory)
+        narrationText: String,
+    ): ExportedClip = exporter.export(video, clip, outputDirectory, narrationText)
+
+    override suspend fun mergeVideos(
+        videos: List<VideoFile>,
+        narrations: List<String>,
+        sceneAudios: List<AudioFile?>,
+        fullAudio: AudioFile?,
+        aspect: VideoAspect,
+        outputDirectory: String,
+    ): ExportedClip = exporter.mergeVideos(
+        videos,
+        narrations,
+        sceneAudios,
+        fullAudio,
+        aspect,
+        outputDirectory,
+    )
+
+    override suspend fun loadAudio(uri: String): AudioFile = withContext(Dispatchers.IO) {
+        val file = if (uri.startsWith("file:")) {
+            try {
+                File(java.net.URI(uri))
+            } catch (exception: Exception) {
+                File(uri.removePrefix("file://"))
+            }
+        } else {
+            File(uri)
+        }
+        if (!file.isFile) throw EditorException(EditorError.NO_VIDEO)
+        AudioFile(uri = file.absolutePath, displayName = file.name)
+    }
 
     override suspend fun loadThumbnail(
         video: VideoFile,

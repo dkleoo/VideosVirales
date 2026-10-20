@@ -18,4 +18,5 @@ object ColorApp {
     val TextSecondaryDark = Color(0xFF9CA3AF)
     val BorderDark = Color(0xFF2A2F3A)
     val ErrorDark = Color(0xFFFFB4AB)
+    val PlayOverlay = Color(0x66000000)
 }

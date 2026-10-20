@@ -6,6 +6,8 @@ enum class EditorError {
     EXPORT_FAILED,
     OPEN_FAILED,
     TRANSCRIPTION_FAILED,
+    TTS_FAILED,
+    MERGE_FAILED,
     FFMPEG_MISSING,
     UNSUPPORTED,
 }

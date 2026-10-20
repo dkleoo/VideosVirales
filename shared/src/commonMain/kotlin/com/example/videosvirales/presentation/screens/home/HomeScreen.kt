@@ -27,7 +27,10 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.videosvirales.di.koinScreenModel
 import com.example.videosvirales.presentation.screens.components.InfoCard
 import com.example.videosvirales.presentation.screens.components.PrimaryButton
-import com.example.videosvirales.presentation.screens.routes.EDITOR_SCREEN
+import com.example.videosvirales.presentation.screens.components.SecondaryButton
+import com.example.videosvirales.presentation.screens.routes.AUTO_CLIPS_SCREEN
+import com.example.videosvirales.presentation.screens.routes.MANUAL_TRIM_SCREEN
+import com.example.videosvirales.presentation.screens.routes.MERGE_VIDEOS_SCREEN
 import com.example.videosvirales.presentation.theme.AppTextStyle
 import com.example.videosvirales.presentation.theme.ColorApp
 import com.example.videosvirales.presentation.theme.Sizes
@@ -38,6 +41,8 @@ import org.jetbrains.compose.resources.stringResource
 import videosvirales.shared.generated.resources.Res
 import videosvirales.shared.generated.resources.home_create_clips
 import videosvirales.shared.generated.resources.home_error
+import videosvirales.shared.generated.resources.home_manual_trim
+import videosvirales.shared.generated.resources.home_merge_videos
 import videosvirales.shared.generated.resources.home_platform_label
 import videosvirales.shared.generated.resources.home_retry
 import videosvirales.shared.generated.resources.home_subtitle
@@ -53,7 +58,9 @@ class HomeScreen : Screen {
         HomeContent(
             state = state,
             onRetry = viewModel::load,
-            onCreateClips = { navigator.push(EDITOR_SCREEN) },
+            onCreateClips = { navigator.push(AUTO_CLIPS_SCREEN) },
+            onManualTrim = { navigator.push(MANUAL_TRIM_SCREEN) },
+            onMergeVideos = { navigator.push(MERGE_VIDEOS_SCREEN) },
         )
     }
 }
@@ -63,6 +70,8 @@ private fun HomeContent(
     state: HomeScreenState,
     onRetry: () -> Unit,
     onCreateClips: () -> Unit,
+    onManualTrim: () -> Unit,
+    onMergeVideos: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -122,6 +131,18 @@ private fun HomeContent(
             PrimaryButton(
                 text = stringResource(Res.string.home_create_clips),
                 onClick = onCreateClips,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            Spacer(Modifier.height(Spacing.Sm))
+            SecondaryButton(
+                text = stringResource(Res.string.home_manual_trim),
+                onClick = onManualTrim,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            Spacer(Modifier.height(Spacing.Sm))
+            SecondaryButton(
+                text = stringResource(Res.string.home_merge_videos),
+                onClick = onMergeVideos,
                 modifier = Modifier.fillMaxWidth(),
             )
         }

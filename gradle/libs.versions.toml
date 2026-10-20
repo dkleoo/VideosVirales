@@ -13,6 +13,7 @@ kotlinx-serialization = "1.11.0"
 ktor = "3.6.0"
 material3 = "1.12.0-alpha03"
 media3 = "1.11.1"
+piper = "1.2.0-38917ff"
 voyager = "1.1.0-beta03"
 vosk = "0.3.75"
 
@@ -31,6 +32,7 @@ compose-uiToolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-previ
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+piper-jni = { module = "io.github.givimad:piper-jni", version.ref = "piper" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }

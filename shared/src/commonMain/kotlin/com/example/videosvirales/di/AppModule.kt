@@ -10,8 +10,11 @@ import com.example.videosvirales.domain.repository.home.HomeRepository
 import com.example.videosvirales.domain.useCase.editor.AnalyzeVideoUseCase
 import com.example.videosvirales.domain.useCase.editor.BuildClipsUseCase
 import com.example.videosvirales.domain.useCase.editor.ExportClipsUseCase
+import com.example.videosvirales.domain.useCase.editor.ExportClipUseCase
 import com.example.videosvirales.domain.useCase.editor.LoadClipThumbnailUseCase
+import com.example.videosvirales.domain.useCase.editor.LoadAudioUseCase
 import com.example.videosvirales.domain.useCase.editor.LoadVideoUseCase
+import com.example.videosvirales.domain.useCase.editor.MergeVideosUseCase
 import com.example.videosvirales.domain.useCase.editor.OpenClipUseCase
 import com.example.videosvirales.domain.useCase.editor.TranscribeClipUseCase
 import com.example.videosvirales.domain.useCase.home.GetHomeInfoUseCase
@@ -34,8 +37,11 @@ val appModule = module {
     factory { AnalyzeVideoUseCase(get()) }
     factory { BuildClipsUseCase() }
     factory { ExportClipsUseCase(get()) }
+    factory { ExportClipUseCase(get()) }
+    factory { MergeVideosUseCase(get()) }
     factory { OpenClipUseCase(get()) }
     factory { LoadClipThumbnailUseCase(get()) }
+    factory { LoadAudioUseCase(get()) }
     factory { TranscribeClipUseCase(get()) }
     factory {
         EditorViewModel(
@@ -44,8 +50,11 @@ val appModule = module {
                 analyzeVideo = get(),
                 buildClips = get(),
                 exportClips = get(),
+                exportClip = get(),
+                mergeVideos = get(),
                 openClip = get(),
                 loadClipThumbnail = get(),
+                loadAudio = get(),
                 transcribeClip = get(),
             )
         )

@@ -37,9 +37,11 @@ import videosvirales.shared.generated.resources.editor_aspect_9_16
 import videosvirales.shared.generated.resources.editor_error_analysis
 import videosvirales.shared.generated.resources.editor_error_export
 import videosvirales.shared.generated.resources.editor_error_ffmpeg
+import videosvirales.shared.generated.resources.editor_error_merge
 import videosvirales.shared.generated.resources.editor_error_no_video
 import videosvirales.shared.generated.resources.editor_error_open
 import videosvirales.shared.generated.resources.editor_error_transcription
+import videosvirales.shared.generated.resources.editor_error_tts
 import videosvirales.shared.generated.resources.editor_error_unsupported
 import videosvirales.shared.generated.resources.editor_step_progress
 import videosvirales.shared.generated.resources.editor_title
@@ -51,6 +53,8 @@ fun EditorHeader(step: EditorStep) {
         EditorStep.LOADING_VIDEO,
         EditorStep.ANALYZING -> 1
         EditorStep.SETTINGS -> 2
+        EditorStep.MANUAL -> 2
+        EditorStep.MERGE -> 2
         EditorStep.REVIEW -> 3
         EditorStep.EXPORTING,
         EditorStep.DONE -> 4
@@ -171,6 +175,8 @@ fun editorErrorMessage(error: EditorError): String = when (error) {
     EditorError.EXPORT_FAILED -> stringResource(Res.string.editor_error_export)
     EditorError.OPEN_FAILED -> stringResource(Res.string.editor_error_open)
     EditorError.TRANSCRIPTION_FAILED -> stringResource(Res.string.editor_error_transcription)
+    EditorError.TTS_FAILED -> stringResource(Res.string.editor_error_tts)
+    EditorError.MERGE_FAILED -> stringResource(Res.string.editor_error_merge)
     EditorError.FFMPEG_MISSING -> stringResource(Res.string.editor_error_ffmpeg)
     EditorError.UNSUPPORTED -> stringResource(Res.string.editor_error_unsupported)
 }

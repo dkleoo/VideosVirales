@@ -1,5 +1,6 @@
 package com.example.videosvirales.domain.repository.editor
 
+import com.example.videosvirales.data.mappers.editor.AudioFile
 import com.example.videosvirales.data.mappers.editor.ClipDraft
 import com.example.videosvirales.data.mappers.editor.ExportedClip
 import com.example.videosvirales.data.mappers.editor.VideoAspect
@@ -19,7 +20,19 @@ interface EditorRepository {
         video: VideoFile,
         clip: ClipDraft,
         outputDirectory: String,
+        narrationText: String,
     ): EditorResult<ExportedClip>
+
+    suspend fun mergeVideos(
+        videos: List<VideoFile>,
+        narrations: List<String>,
+        sceneAudios: List<AudioFile?>,
+        fullAudio: AudioFile?,
+        aspect: VideoAspect,
+        outputDirectory: String,
+    ): EditorResult<ExportedClip>
+
+    suspend fun loadAudio(uri: String): EditorResult<AudioFile>
 
     suspend fun loadThumbnail(
         video: VideoFile,

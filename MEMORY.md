@@ -1,25 +1,41 @@
 # Reglas de negocio
 
-## Editor de clips
+## Editor de video
 
-- Flujo: subir video → analizar mejores momentos → configurar cantidad, duración y formato → revisar previews y subtítulos → exportar.
-- Cantidad de clips: 1 a 10. Valor por defecto: 3.
-- Duración por clip: 5 a 60 segundos. Valor por defecto: 15 segundos.
+- Modos disponibles: crear clips automáticos, recortar un video manualmente y unir varios videos.
+- Cantidad de clips automáticos: 1 a 10. Valor por defecto: 3.
+- Duración por clip automático: 5 a 60 segundos. Valor por defecto: 15 segundos.
 - La duración solicitada se limita a la duración real del video.
 - Formatos de salida: 9:16 (1080x1920), 1:1 (1080x1080) y 16:9 (1920x1080).
 - El video se escala para cubrir el formato y se recorta al centro cuando sobra imagen.
-- Cada clip muestra una preview con el recorte que se aplicará al exportar.
-- Los momentos se eligen por ventanas no superpuestas con el mayor puntaje. Si no alcanzan, se completan con ventanas distribuidas uniformemente.
+- Cada clip automático muestra una preview con el recorte que se aplicará al exportar.
+- Los momentos automáticos se eligen por ventanas no superpuestas con el mayor puntaje. Si no alcanzan, se completan con ventanas distribuidas uniformemente.
 - La detección local es heurística: cambios visuales/escena en Android y cambios de escena + energía de audio en Desktop.
-- Los subtítulos se generan automáticamente si hay voz: Vosk offline en Android y whisper.cpp en Desktop.
+- Recorte manual: un segmento por sesión, con inicio y fin ajustables. La duración mínima es 1 segundo y el fin no puede superar la duración del video. Por defecto termina a los 15 segundos o al final del video.
+- El recorte manual permite generar el subtítulo del segmento seleccionado.
+- Unión de videos: requiere al menos 2 videos y se unen en el orden de selección. Produce un único MP4.
+- En la unión, cada video se puede subir o bajar con flechas para cambiar el orden de los capítulos.
+- Cada video de la unión muestra una preview y un botón para reproducir el capítulo antes de unirlo.
+- Audio propio: se puede elegir un archivo de audio por escena/clip y un audio general para el video unido.
+- El audio propio se mezcla con el audio original del video.
+- Si una escena tiene audio propio, ese audio reemplaza al narrador TTS de esa escena.
+- El audio general del video unido se corta a la duración total; no se repite en bucle.
+- Formatos de audio admitidos: MP3, M4A, AAC, WAV, OGG y FLAC.
+- Los subtítulos automáticos se generan si hay voz: Vosk offline en Android y whisper.cpp en Desktop.
 - La primera transcripción descarga un modelo de voz local si no existe. Después funciona sin conexión.
-- Los subtítulos son editables por clip. Un subtítulo vacío no se renderiza.
-- No se aplican animaciones de zoom, fade ni movimiento; los clips son estáticos con subtítulos.
+- Los subtítulos son editables. Un subtítulo vacío no se renderiza.
+- Narración por escena: cada clip automático y cada video de la unión pueden tener su propio texto de narrador.
+- El narrador usa solo español.
+- En Desktop el narrador usa Piper con voz masculina española de locutor (`es_ES-davefx-medium`). La primera vez descarga el modelo (~63 MB) y después funciona sin conexión.
+- En Android el narrador usa la voz TTS española del sistema. Si no hay una voz española instalada, se muestra un error.
+- El narrador se mezcla con el audio original del video; no lo reemplaza.
+- El narrador está disponible en clips automáticos (por escena), recorte manual y unión de videos.
+- No se aplican animaciones de zoom, fade ni movimiento; los videos son estáticos con subtítulos.
 - Salida: MP4 con video H.264 y audio AAC en el formato seleccionado.
-- Android exporta con Media3 Transformer y publica los clips en `Movies/VideosVirales` vía MediaStore (galería).
-- Cada clip exportado se puede abrir con el programa o visor predeterminado del sistema desde el paso final.
+- Android exporta con Media3 Transformer y publica los resultados en `Movies/VideosVirales` vía MediaStore (galería).
+- Cada resultado se puede abrir con el programa o visor predeterminado del sistema desde el paso final.
 - En Android la apertura usa `ACTION_VIEW` con permiso temporal de lectura; para archivos internos usa `FileProvider`. En Desktop usa `Desktop.open`.
 - Desktop exporta con FFmpeg (requiere libass y freetype) y guarda en `~/Movies/VideosVirales`.
 - Desktop requiere `whisper-cli` para la transcripción automática.
 - iOS no soporta este flujo; las implementaciones son stubs que reportan la función como no disponible.
-- Si la duración total del video no permite la cantidad de clips solicitada sin superponerse, se permiten solapamientos para completar la cantidad pedida.
+- Si la duración total del video no permite la cantidad de clips automáticos sin superponerse, se permiten solapamientos para completar la cantidad pedida.

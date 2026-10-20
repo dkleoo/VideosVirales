@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.annotation.OptIn
+import androidx.media3.common.C
 import androidx.media3.common.Effect
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
@@ -15,13 +16,16 @@ import androidx.media3.effect.OverlayEffect
 import androidx.media3.effect.Presentation
 import androidx.media3.transformer.Composition
 import androidx.media3.transformer.EditedMediaItem
+import androidx.media3.transformer.EditedMediaItemSequence
 import androidx.media3.transformer.Effects
 import androidx.media3.transformer.ExportException
 import androidx.media3.transformer.ExportResult
 import androidx.media3.transformer.Transformer
+import com.example.videosvirales.data.mappers.editor.AudioFile
 import com.example.videosvirales.data.mappers.editor.ClipDraft
 import com.example.videosvirales.data.mappers.editor.EditorError
 import com.example.videosvirales.data.mappers.editor.ExportedClip
+import com.example.videosvirales.data.mappers.editor.VideoAspect
 import com.example.videosvirales.data.mappers.editor.VideoFile
 import com.example.videosvirales.data.repositoyImpl.editor.EditorException
 import kotlinx.coroutines.Dispatchers
@@ -35,12 +39,17 @@ import kotlin.coroutines.resumeWithException
 class AndroidVideoExporter(
     private val context: Context,
 ) {
+    private val tts = AndroidTtsSynthesizer(context)
+
     suspend fun export(
         video: VideoFile,
         clip: ClipDraft,
         outputDirectory: String,
+        narrationText: String,
     ): ExportedClip = withContext(Dispatchers.Main) {
+        var narrationFile: File? = null
         try {
+            narrationFile = if (clip.audio == null) narration(narrationText) else null
             val fileName = "clip_${clip.index.toString().padStart(2, '0')}_${System.currentTimeMillis()}.mp4"
             val tempFile = File(context.cacheDir, fileName)
 
@@ -54,45 +63,25 @@ class AndroidVideoExporter(
                 )
                 .build()
 
-            val editedMediaItem = EditedMediaItem.Builder(mediaItem)
+            val videoItem = EditedMediaItem.Builder(mediaItem)
                 .setEffects(Effects(emptyList(), buildVideoEffects(clip)))
                 .build()
-
-            suspendCancellableCoroutine<Unit> { continuation ->
-                val listener = object : Transformer.Listener {
-                    override fun onCompleted(
-                        composition: Composition,
-                        exportResult: ExportResult,
-                    ) {
-                        if (continuation.isActive) continuation.resume(Unit)
-                    }
-
-                    override fun onError(
-                        composition: Composition,
-                        exportResult: ExportResult,
-                        exportException: ExportException,
-                    ) {
-                        if (continuation.isActive) {
-                            continuation.resumeWithException(
-                                EditorException(EditorError.EXPORT_FAILED, exportException)
-                            )
-                        }
-                    }
+            val sequences = mutableListOf(
+                EditedMediaItemSequence.withAudioAndVideoFrom(listOf(videoItem))
+            )
+            val customAudio = clip.audio
+            if (customAudio != null) {
+                sequences += audioSequence(customAudio, clip.durationMs, 0L)
+            } else {
+                narrationFile?.let { file ->
+                    sequences += EditedMediaItemSequence.withAudioFrom(
+                        listOf(narrationItem(file, clip.durationMs))
+                    )
                 }
-                val activeTransformer = Transformer.Builder(context)
-                    .setVideoMimeType(MimeTypes.VIDEO_H264)
-                    .setAudioMimeType(MimeTypes.AUDIO_AAC)
-                    .addListener(listener)
-                    .build()
-                continuation.invokeOnCancellation { activeTransformer.cancel() }
-                activeTransformer.start(editedMediaItem, tempFile.absolutePath)
             }
 
-            val published = publish(
-                tempFile = tempFile,
-                fileName = fileName,
-                fallbackDirectory = outputDirectory,
-            )
+            transform(Composition.Builder(sequences).build(), tempFile)
+            val published = publish(tempFile, fileName, outputDirectory)
             ExportedClip(
                 index = clip.index,
                 path = published.path,
@@ -103,6 +92,149 @@ class AndroidVideoExporter(
             throw exception
         } catch (exception: Exception) {
             throw EditorException(EditorError.EXPORT_FAILED, exception)
+        } finally {
+            narrationFile?.delete()
+        }
+    }
+
+    suspend fun mergeVideos(
+        videos: List<VideoFile>,
+        narrations: List<String>,
+        sceneAudios: List<AudioFile?>,
+        fullAudio: AudioFile?,
+        aspect: VideoAspect,
+        outputDirectory: String,
+    ): ExportedClip = withContext(Dispatchers.Main) {
+        if (videos.isEmpty()) throw EditorException(EditorError.EXPORT_FAILED)
+        val narrationFiles = mutableListOf<File>()
+        try {
+            val items = videos.map { video ->
+                val effects = Effects(
+                    emptyList(),
+                    listOf(
+                        Presentation.createForWidthAndHeight(
+                            aspect.width,
+                            aspect.height,
+                            Presentation.LAYOUT_SCALE_TO_FIT_WITH_CROP,
+                        )
+                    ),
+                )
+                EditedMediaItem.Builder(MediaItem.fromUri(video.uri))
+                    .setEffects(effects)
+                    .build()
+            }
+            val sequences = mutableListOf(
+                EditedMediaItemSequence.withAudioAndVideoFrom(items)
+            )
+
+            var offsetUs = 0L
+            videos.forEachIndexed { index, video ->
+                val sceneAudio = sceneAudios.getOrNull(index)
+                if (sceneAudio != null) {
+                    sequences += audioSequence(sceneAudio, video.durationMs, offsetUs)
+                } else {
+                    val text = narrations.getOrElse(index) { "" }
+                    if (text.isNotBlank()) {
+                        val file = tts.synthesize(text)
+                        narrationFiles += file
+                        sequences += EditedMediaItemSequence
+                            .Builder(setOf(C.TRACK_TYPE_AUDIO))
+                            .addGap(offsetUs)
+                            .addItem(narrationItem(file, video.durationMs))
+                            .build()
+                    }
+                }
+                offsetUs += video.durationMs * 1_000
+            }
+            if (fullAudio != null) {
+                val totalDurationMs = videos.sumOf { it.durationMs }.coerceAtLeast(1)
+                sequences += audioSequence(fullAudio, totalDurationMs, 0L)
+            }
+
+            val fileName = "merged_${System.currentTimeMillis()}.mp4"
+            val tempFile = File(context.cacheDir, fileName)
+            transform(Composition.Builder(sequences).build(), tempFile)
+            val published = publish(tempFile, fileName, outputDirectory)
+            ExportedClip(
+                index = 1,
+                path = published.path,
+                displayName = fileName,
+                uri = published.uri,
+            )
+        } catch (exception: EditorException) {
+            throw exception
+        } catch (exception: Exception) {
+            throw EditorException(EditorError.EXPORT_FAILED, exception)
+        } finally {
+            narrationFiles.forEach { file -> file.delete() }
+        }
+    }
+
+    private fun audioSequence(
+        audio: AudioFile,
+        durationMs: Long,
+        offsetUs: Long,
+    ): EditedMediaItemSequence = EditedMediaItemSequence
+        .Builder(setOf(C.TRACK_TYPE_AUDIO))
+        .addGap(offsetUs.coerceAtLeast(0))
+        .addItem(
+            EditedMediaItem.Builder(
+                MediaItem.Builder()
+                    .setUri(Uri.parse(audio.uri))
+                    .setClippingConfiguration(
+                        MediaItem.ClippingConfiguration.Builder()
+                            .setEndPositionMs(durationMs.coerceAtLeast(1))
+                            .build()
+                    )
+                    .build()
+            ).build()
+        )
+        .build()
+
+    private suspend fun narration(text: String): File? =
+        if (text.isBlank()) null else tts.synthesize(text)
+
+    private fun narrationItem(file: File, durationMs: Long): EditedMediaItem =
+        EditedMediaItem.Builder(
+            MediaItem.Builder()
+                .setUri(Uri.fromFile(file))
+                .setClippingConfiguration(
+                    MediaItem.ClippingConfiguration.Builder()
+                        .setEndPositionMs(durationMs.coerceAtLeast(1))
+                        .build()
+                )
+                .build()
+        ).build()
+
+    private suspend fun transform(composition: Composition, outputFile: File) {
+        suspendCancellableCoroutine<Unit> { continuation ->
+            val listener = object : Transformer.Listener {
+                override fun onCompleted(
+                    composition: Composition,
+                    exportResult: ExportResult,
+                ) {
+                    if (continuation.isActive) continuation.resume(Unit)
+                }
+
+                override fun onError(
+                    composition: Composition,
+                    exportResult: ExportResult,
+                    exportException: ExportException,
+                ) {
+                    if (continuation.isActive) {
+                        continuation.resumeWithException(
+                            EditorException(EditorError.EXPORT_FAILED, exportException)
+                        )
+                    }
+                }
+            }
+            val transformer = Transformer.Builder(context)
+                .setVideoMimeType(MimeTypes.VIDEO_H264)
+                .setAudioMimeType(MimeTypes.AUDIO_AAC)
+                .addListener(listener)
+                .build()
+            continuation.invokeOnCancellation { transformer.cancel() }
+            transformer.start(composition, outputFile.absolutePath)
         }
     }
 

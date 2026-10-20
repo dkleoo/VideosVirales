@@ -30,8 +30,10 @@ import com.example.videosvirales.data.mappers.editor.VideoAspect
 import com.example.videosvirales.presentation.screens.components.PrimaryButton
 import com.example.videosvirales.presentation.screens.components.SecondaryButton
 import com.example.videosvirales.presentation.screens.editor.EditorScreenState
+import com.example.videosvirales.presentation.screens.editor.EditorViewModel
 import com.example.videosvirales.presentation.theme.AppTextStyle
 import com.example.videosvirales.presentation.theme.Radius
+import com.example.videosvirales.presentation.theme.Sizes
 import com.example.videosvirales.presentation.theme.Spacing
 import com.example.videosvirales.presentation.theme.tiendasOnTextStyle
 import com.example.videosvirales.presentation.util.formatDuration
@@ -40,9 +42,15 @@ import org.jetbrains.compose.resources.decodeToImageBitmap
 import org.jetbrains.compose.resources.stringResource
 import videosvirales.shared.generated.resources.Res
 import videosvirales.shared.generated.resources.editor_aspect
+import videosvirales.shared.generated.resources.editor_audio_replaces_narrator
+import videosvirales.shared.generated.resources.editor_audio_scene
 import videosvirales.shared.generated.resources.editor_back
 import videosvirales.shared.generated.resources.editor_clip_number
 import videosvirales.shared.generated.resources.editor_export
+import videosvirales.shared.generated.resources.editor_narration_placeholder
+import videosvirales.shared.generated.resources.editor_narration_scene
+import videosvirales.shared.generated.resources.editor_narration_section
+import videosvirales.shared.generated.resources.editor_narration_section_help
 import videosvirales.shared.generated.resources.editor_preparing_clips
 import videosvirales.shared.generated.resources.editor_preview_unavailable
 import videosvirales.shared.generated.resources.editor_review_subtitle
@@ -55,10 +63,7 @@ import videosvirales.shared.generated.resources.editor_subtitles_unavailable
 @Composable
 fun ReviewStep(
     state: EditorScreenState,
-    onSubtitleChange: (Int, String) -> Unit,
-    onAspectChange: (VideoAspect) -> Unit,
-    onExport: () -> Unit,
-    onBack: () -> Unit,
+    viewModel: EditorViewModel,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
@@ -78,7 +83,7 @@ fun ReviewStep(
         Spacer(Modifier.height(Spacing.Sm))
         AspectSelector(
             selected = state.aspect,
-            onSelect = onAspectChange,
+            onSelect = viewModel::updateAspect,
         )
 
         if (state.isPreparingClips) {
@@ -108,27 +113,39 @@ fun ReviewStep(
         }
 
         Spacer(Modifier.height(Spacing.Xl))
+        SectionTitle(stringResource(Res.string.editor_narration_section))
+        Spacer(Modifier.height(Spacing.Xs))
+        Text(
+            text = stringResource(Res.string.editor_narration_section_help),
+            style = tiendasOnTextStyle(
+                AppTextStyle.Caption,
+                MaterialTheme.colorScheme.onSurfaceVariant,
+            ),
+        )
+        Spacer(Modifier.height(Spacing.Lg))
         val maxScore = state.clips.maxOfOrNull { it.score }?.takeIf { it > 0f } ?: 1f
         state.clips.forEach { clip ->
             ClipEditorCard(
                 clip = clip,
                 scorePercent = formatScore(clip.score / maxScore),
                 thumbnail = state.thumbnails[clip.index],
-                onSubtitleChange = { onSubtitleChange(clip.index, it) },
+                onSubtitleChange = { viewModel.updateSubtitle(clip.index, it) },
+                onNarrationChange = { viewModel.updateClipNarration(clip.index, it) },
+                onAudioChange = { uri -> viewModel.setClipAudio(clip.index, uri) },
             )
             Spacer(Modifier.height(Spacing.Lg))
         }
 
         PrimaryButton(
             text = stringResource(Res.string.editor_export),
-            onClick = onExport,
+            onClick = viewModel::export,
             modifier = Modifier.fillMaxWidth(),
             enabled = !state.isPreparingClips,
         )
         Spacer(Modifier.height(Spacing.Sm))
         SecondaryButton(
             text = stringResource(Res.string.editor_back),
-            onClick = onBack,
+            onClick = viewModel::backToSettings,
             modifier = Modifier.fillMaxWidth(),
         )
     }
@@ -140,6 +157,8 @@ private fun ClipEditorCard(
     scorePercent: Int,
     thumbnail: ByteArray?,
     onSubtitleChange: (String) -> Unit,
+    onNarrationChange: (String) -> Unit,
+    onAudioChange: (String?) -> Unit,
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -154,31 +173,36 @@ private fun ClipEditorCard(
                 .padding(Spacing.Xl),
         ) {
             val aspectModifier = Modifier
-                .fillMaxWidth()
+                .height(Sizes.PreviewHeight)
                 .aspectRatio(clip.aspect.width.toFloat() / clip.aspect.height)
                 .clip(RoundedCornerShape(Radius.Sm))
 
-            if (thumbnail != null) {
-                val image = remember(thumbnail) { thumbnail.decodeToImageBitmap() }
-                Image(
-                    bitmap = image,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = aspectModifier,
-                )
-            } else {
-                Box(
-                    modifier = aspectModifier.background(MaterialTheme.colorScheme.surfaceVariant),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        text = stringResource(Res.string.editor_preview_unavailable),
-                        style = tiendasOnTextStyle(
-                            AppTextStyle.Caption,
-                            MaterialTheme.colorScheme.onSurfaceVariant,
-                        ),
-                        textAlign = TextAlign.Center,
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center,
+            ) {
+                if (thumbnail != null) {
+                    val image = remember(thumbnail) { thumbnail.decodeToImageBitmap() }
+                    Image(
+                        bitmap = image,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = aspectModifier,
                     )
+                } else {
+                    Box(
+                        modifier = aspectModifier.background(MaterialTheme.colorScheme.surfaceVariant),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            text = stringResource(Res.string.editor_preview_unavailable),
+                            style = tiendasOnTextStyle(
+                                AppTextStyle.Caption,
+                                MaterialTheme.colorScheme.onSurfaceVariant,
+                            ),
+                            textAlign = TextAlign.Center,
+                        )
+                    }
                 }
             }
 
@@ -209,6 +233,47 @@ private fun ClipEditorCard(
                 ),
             )
             Spacer(Modifier.height(Spacing.Lg))
+            AudioPicker(
+                title = stringResource(Res.string.editor_audio_scene),
+                audio = clip.audio,
+                onPick = onAudioChange,
+            )
+            if (clip.audio != null) {
+                Spacer(Modifier.height(Spacing.Xs))
+                Text(
+                    text = stringResource(Res.string.editor_audio_replaces_narrator),
+                    style = tiendasOnTextStyle(
+                        AppTextStyle.Caption,
+                        MaterialTheme.colorScheme.onSurfaceVariant,
+                    ),
+                )
+            }
+            Spacer(Modifier.height(Spacing.Lg))
+            OutlinedTextField(
+                value = clip.narration,
+                onValueChange = onNarrationChange,
+                modifier = Modifier.fillMaxWidth(),
+                label = {
+                    Text(
+                        text = stringResource(Res.string.editor_narration_scene),
+                        style = tiendasOnTextStyle(AppTextStyle.Caption),
+                    )
+                },
+                placeholder = {
+                    Text(
+                        text = stringResource(Res.string.editor_narration_placeholder),
+                        style = tiendasOnTextStyle(
+                            AppTextStyle.Caption,
+                            MaterialTheme.colorScheme.onSurfaceVariant,
+                        ),
+                    )
+                },
+                textStyle = tiendasOnTextStyle(AppTextStyle.Body),
+                minLines = 2,
+                maxLines = 4,
+                shape = RoundedCornerShape(Radius.Sm),
+            )
+            Spacer(Modifier.height(Spacing.Md))
             OutlinedTextField(
                 value = clip.subtitle,
                 onValueChange = onSubtitleChange,

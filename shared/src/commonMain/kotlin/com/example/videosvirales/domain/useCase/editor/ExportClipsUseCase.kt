@@ -20,7 +20,7 @@ class ExportClipsUseCase(
         val exported = mutableListOf<ExportedClip>()
 
         clips.forEachIndexed { index, clip ->
-            when (val result = repository.exportClip(video, clip, outputDirectory)) {
+            when (val result = repository.exportClip(video, clip, outputDirectory, clip.narration)) {
                 is EditorResult.Success -> exported += result.data
                 is EditorResult.Error -> return result
             }

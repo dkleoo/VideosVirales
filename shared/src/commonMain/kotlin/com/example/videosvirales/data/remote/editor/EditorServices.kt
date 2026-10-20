@@ -1,5 +1,6 @@
 package com.example.videosvirales.data.remote.editor
 
+import com.example.videosvirales.data.mappers.editor.AudioFile
 import com.example.videosvirales.data.mappers.editor.ClipDraft
 import com.example.videosvirales.data.mappers.editor.ExportedClip
 import com.example.videosvirales.data.mappers.editor.VideoAspect
@@ -18,7 +19,19 @@ interface EditorServices {
         video: VideoFile,
         clip: ClipDraft,
         outputDirectory: String,
+        narrationText: String,
     ): ExportedClip
+
+    suspend fun mergeVideos(
+        videos: List<VideoFile>,
+        narrations: List<String>,
+        sceneAudios: List<AudioFile?>,
+        fullAudio: AudioFile?,
+        aspect: VideoAspect,
+        outputDirectory: String,
+    ): ExportedClip
+
+    suspend fun loadAudio(uri: String): AudioFile
 
     suspend fun loadThumbnail(
         video: VideoFile,
